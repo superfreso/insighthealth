@@ -73,12 +73,11 @@
   <input class="big-input" type="password" id="directKeyInput" placeholder="AIzaSy..."/>
   <div style="width:100%;margin-bottom:10px">
     <div style="font-size:12px;color:#666;margin-bottom:5px;text-align:left">Modelo</div>
-    <select id="modelSelect" class="big-input" style="margin:0">
-      <option value="gemini-2.0-flash">gemini-2.0-flash — Recomendado ✅</option>
-      <option value="gemini-2.0-flash-lite">gemini-2.0-flash-lite — Más barato</option>
-      <option value="gemini-1.5-flash">gemini-1.5-flash — Alternativa</option>
-      <option value="gemini-1.5-flash-latest">gemini-1.5-flash-latest — Alternativa</option>
-    </select>
+   <select id="modelSelect" class="big-input" style="margin:0">
+  <option value="gemini-2.5-flash">gemini-2.5-flash — RECOMENDADO ✅</option>
+  <option value="gemini-2.5-flash-lite">gemini-2.5-flash-lite</option>
+  <option value="gemini-2.0-flash">gemini-2.0-flash</option>
+</select>
   </div>
   <button class="btn-p" onclick="saveDirectKey()">Guardar y comenzar</button>
   <button class="btn-s" onclick="showScreen('setup-screen')">← Volver</button>
@@ -141,11 +140,9 @@ const BASELINE = {
 
 // Costo estimado por llamada según modelo (USD)
 const COST_PER_CALL = {
-  "gemini-2.0-flash":0.000075,
-  "gemini-2.0-flash-lite":0.00004,
-  "gemini-1.5-flash":0.000075,
-  "gemini-1.5-flash-latest":0.000075,
-  "gemini-1.5-pro":0.00125
+  "gemini-2.5-flash":0.0001,
+  "gemini-2.5-flash-lite":0.00005,
+  "gemini-2.0-flash":0.000075
 };
 
 const DAILY_BUDGET = 0.05; // USD — avisa si superas este límite
@@ -195,7 +192,7 @@ function addCost(model){
 }
 function updateBadges(){
   const d = getCosts();
-  const model = LS.get("ih-model",gemini-2.5-flash");
+  const model = LS.get("ih-model","gemini-2.5-flash");
   const cb = document.getElementById("cost-badge");
   const mb = document.getElementById("model-badge");
   if(cb) cb.textContent = `Hoy: $${d.usd.toFixed(4)} · ${d.calls} análisis`;

@@ -282,20 +282,17 @@ async function callGemini(b64, mime){
   // ── MODO DIRECTO ──
   // Lista de modelos a intentar en orden.
   // Si el primero falla, prueba el siguiente automáticamente.
-  const model = cfg.model||"gemini-2.0-flash";
-  const FALLBACK_MODELS = [
-    model,
-    "gemini-2.0-flash",
-    "gemini-2.0-flash-lite",
-    "gemini-1.5-flash",
-    "gemini-1.5-flash-latest"
-  ];
+const model = "gemini-1.5-flash-latest";
+const FALLBACK_MODELS = [
+  "gemini-1.5-flash-latest",
+  "gemini-1.5-pro-latest"
+];
   // Eliminar duplicados manteniendo el orden
   const modelsToTry = [...new Set(FALLBACK_MODELS)];
 
   let res, lastError;
   for(const m of modelsToTry){
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${cfg.key}`;
+    const url = `https://generativelanguage.googleapis.com/v1/models/${m}:generateContent?key=${cfg.key}`;
     res = await fetch(url,{
       method:"POST",
       headers:{"Content-Type":"application/json"},

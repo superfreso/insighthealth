@@ -195,7 +195,7 @@ function addCost(model){
 }
 function updateBadges(){
   const d = getCosts();
-  const model = LS.get("ih-model","gemini-1.5-flash");
+  const model = LS.get("ih-model",gemini-2.5-flash");
   const cb = document.getElementById("cost-badge");
   const mb = document.getElementById("model-badge");
   if(cb) cb.textContent = `Hoy: $${d.usd.toFixed(4)} · ${d.calls} análisis`;
@@ -282,10 +282,11 @@ async function callGemini(b64, mime){
   // ── MODO DIRECTO ──
   // Lista de modelos a intentar en orden.
   // Si el primero falla, prueba el siguiente automáticamente.
-  const model = cfg.model||"gemini-2.0-flash";
-  const FALLBACK_MODELS = [
-  "gemini-1.5-flash-latest",
-  "gemini-1.5-pro-latest"
+  const model = cfg.model||"gemini-2.5-flash";
+const FALLBACK_MODELS = [
+  "gemini-2.5-flash",
+  "gemini-2.5-flash-lite",
+  "gemini-2.0-flash"
 ];
   // Eliminar duplicados manteniendo el orden
   const modelsToTry = [...new Set(FALLBACK_MODELS)];

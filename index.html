@@ -332,7 +332,8 @@ const modelsToTry = [...new Set(FALLBACK_MODELS)];
       if(m !== selectedModel){ LS.set("ih-model", m); toast(`ℹ️ Usando ${m}`); }
       addCost(m); updateBadges();
       const data = await res.json();
-      const raw = data.candidates?.[0]?.content?.parts?.[0]?.text||"";
+     const parts = data.candidates?.[0]?.content?.parts || [];
+const raw = parts.map(p => p.text || "").join("");
       return parseResponse(raw);
     }
     const errData = await res.json();
@@ -352,12 +353,6 @@ const modelsToTry = [...new Set(FALLBACK_MODELS)];
   if(msg.includes("PERMISSION_DENIED"))throw new Error("Sin permisos. Activa billing en Google Cloud.");
   if(msg.includes("not found")||msg.includes("not supported")) throw new Error("Ningún modelo disponible para tu cuenta. Verifica en Google AI Studio.");
   throw new Error(msg);
-
-  const data = await res.json();
-  const raw = data.candidates?.[0]?.content?.parts?.[0]?.text||"";
-  addCost(model);
-  updateBadges();
-  return parseResponse(raw);
 }
 
 // ── PARSER ROBUSTO ─────────────────────────────────────────

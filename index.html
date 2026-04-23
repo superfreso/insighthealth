@@ -297,14 +297,18 @@ async function callGemini(b64, mime){
   // ── MODO DIRECTO ──
   // Lista de modelos a intentar en orden.
   // Si el primero falla, prueba el siguiente automáticamente.
-  const model = cfg.model||"gemini-2.5-flash";
+ const selectedModel = cfg.model || "gemini-2.5-flash";
+
+// Prioriza el modelo elegido por el usuario
 const FALLBACK_MODELS = [
+  selectedModel,
   "gemini-2.5-flash",
   "gemini-2.5-flash-lite",
   "gemini-2.0-flash"
 ];
-  // Eliminar duplicados manteniendo el orden
-  const modelsToTry = [...new Set(FALLBACK_MODELS)];
+
+// Elimina duplicados manteniendo el orden
+const modelsToTry = [...new Set(FALLBACK_MODELS)];
 
   let res, lastError;
   for(const m of modelsToTry){
@@ -325,7 +329,7 @@ const FALLBACK_MODELS = [
     });
     if(res.ok){
       // Guardar el modelo que funcionó para la próxima vez
-      if(m !== model){ LS.set("ih-model", m); toast(`ℹ️ Usando ${m}`); }
+      if(m !== selectedModel){ LS.set("ih-model", m); toast(`ℹ️ Usando ${m}`); }
       addCost(m); updateBadges();
       const data = await res.json();
       const raw = data.candidates?.[0]?.content?.parts?.[0]?.text||"";

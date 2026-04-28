@@ -312,7 +312,7 @@ const modelsToTry = [...new Set(FALLBACK_MODELS)];
 
   let res, lastError;
   for(const m of modelsToTry){
-    const url = `https://generativelanguage.googleapis.com/v1/models/${m}:generateContent?key=${cfg.key}`;
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${cfg.key}`;
     res = await fetch(url,{
       method:"POST",
       headers:{"Content-Type":"application/json"},

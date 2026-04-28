@@ -44,23 +44,34 @@ self.addEventListener("activate", (event) => {
 // → Intenta descargar desde internet primero.
 // → Si no hay conexión, sirve desde el caché guardado.
 self.addEventListener("fetch", (event) => {
-  // Las llamadas a la API de IA siempre van a la red (necesitan internet)
-  if (event.request.url.includes("googleapis.com") ||
-      event.request.url.includes("generativelanguage") ||
-      event.request.url.includes("api.anthropic.com")) {
-    return; // No interceptar — dejar pasar directo
+
+  // ❌ Ignorar cosas raras (chrome-extension, etc)
+  if (!event.request.url.startsWith("http")) return;
+
+  // ❌ No interceptar APIs externas
+  if (
+    event.request.url.includes("googleapis.com") ||
+    event.request.url.includes("generativelanguage") ||
+    event.request.url.includes("api.anthropic.com")
+  ) {
+    return;
   }
 
   event.respondWith(
     fetch(event.request)
       .then((response) => {
-        // Si descargó bien, guarda una copia fresca en caché
-        const copy = response.clone();
-        caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
+
+        // Solo guardar si es válido
+        if (response && response.status === 200) {
+          const copy = response.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, copy);
+          });
+        }
+
         return response;
       })
       .catch(() => {
-        // Sin internet → servir desde caché
         return caches.match(event.request);
       })
   );

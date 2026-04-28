@@ -420,24 +420,36 @@ async function handlePhoto(e){
   const file=e.target.files[0]; if(!file) return;
   const cfg=getCfg();
   if(!cfg.mode){ toast("⚠️ Configura la API primero","err"); return; }
-  S.loading=true; renderTab();
-  try{
-    toast("📸 Comprimiendo...");
-    const img=await compress(file);
-    toast("🧠 Gemini analizando...");
-    const result=await callGemini(img.b64,img.mime);
-    S.meals.unshift({
-      ...result,imgData:img.dataUrl,
-      time:new Date().toLocaleTimeString("es",{hour:"2-digit",minute:"2-digit"}),
-      date:new Date().toLocaleDateString("es"),
-      id:Date.now()
-    });
-    saveData();
-    toast(`✅ ${result.nombre} — ${result.score}/10`);
-  }catch(err){
-    toast("❌ "+err.message,"err");
-  }
-  S.loading=false; renderTab(); e.target.value="";
+ S.loading = true;
+
+try {
+  renderTab();
+
+  toast("📸 Comprimiendo...");
+  const img = await compress(file);
+
+  toast("🧠 Gemini analizando...");
+  const result = await callGemini(img.b64, img.mime);
+  console.log("RESULTADO GEMINI:", result);
+  S.meals.unshift({
+    ...result,
+    imgData: img.dataUrl,
+    time: new Date().toLocaleTimeString("es",{hour:"2-digit",minute:"2-digit"}),
+    date: new Date().toLocaleDateString("es"),
+    id: Date.now()
+  });
+
+  saveData();
+  toast(`✅ ${result.nombre} — ${result.score}/10`);
+
+} catch (err) {
+  console.error("ERROR REAL:", err);
+  toast("❌ " + (err.message || err), "err");
+}
+
+S.loading = false;
+renderTab();
+e.target.value = "";
 }
 
 // ── RENDER ─────────────────────────────────────────────────

@@ -217,13 +217,14 @@ function startApp(){
   toast("✅ Listo");
 }
 
-// PROMPT corto — menos tokens de entrada = más espacio para la respuesta JSON
-// Prompt largo era la causa raíz: Gemini truncaba el JSON cuando
-// el prompt consumía demasiados tokens, resultando en valores 0.
-const PROMPT = `Analiza el alimento o bebida de la imagen. Usuario: 20 años, 77kg, objetivo bajar grasa.
-Solo responde con este JSON (sin texto extra, sin markdown, sin bloques de código):
-{"nombre":"","porciones":"","calorias":0,"proteina":0,"carbos":0,"grasa":0,"fibra":0,"score":0,"clasificacion":"","positivo":"","feedback":"","sugerencia":"","confianza":""}
-IMPORTANTE: calorias/proteina/carbos/grasa NUNCA son 0 salvo agua pura. Siempre estima. score 1-10 (10=ideal para bajar grasa).`;
+// PROMPT — números primero en el JSON, texto descriptivo al final
+// CAUSA DEL BUG: "porciones" tenía texto largo ANTES de los números,
+// Gemini llenaba el texto y se quedaba sin tokens antes de escribir los macros.
+// SOLUCIÓN: números primero → aunque se trunque el texto, los macros ya están.
+const PROMPT = `Analiza el alimento/bebida. Usuario: 20 años, 77kg, objetivo bajar grasa.
+Responde SOLO con este JSON exacto (sin texto, sin markdown):
+{"nombre":"","calorias":0,"proteina":0,"carbos":0,"grasa":0,"fibra":0,"score":0,"clasificacion":"","confianza":"","porciones":"","positivo":"","feedback":"","sugerencia":""}
+Reglas: calorias/proteina/carbos/grasa NUNCA son 0 (excepto agua). Estima siempre. score 1-10.`;
 
 async function callGemini(b64, mime){
   const cfg = getCfg();

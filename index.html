@@ -40,7 +40,7 @@
   </style>
 </head>
 <body>
- 
+
 <div id="setup-screen" class="overlay">
   <div style="font-size:11px;color:#63b3ed;letter-spacing:3px;text-transform:uppercase;margin-bottom:14px">InsightHealth</div>
   <div style="font-size:22px;font-weight:700;margin-bottom:6px">Configuración inicial</div>
@@ -60,7 +60,7 @@
     <div style="font-size:12px;color:#777">La key nunca aparece en el código. Requiere configurar un Worker (~10 min).</div>
   </div>
 </div>
- 
+
 <div id="direct-screen" class="overlay hidden">
   <div style="font-size:20px;font-weight:700;margin-bottom:6px">🔑 API Key de Gemini</div>
   <div style="font-size:13px;color:#777;line-height:1.6;margin-bottom:16px;max-width:320px">
@@ -79,7 +79,7 @@
   <button class="btn-s" onclick="showScreen('setup-screen')">← Volver</button>
   <div style="font-size:11px;color:#444;margin-top:10px">La key se guarda solo en tu dispositivo</div>
 </div>
- 
+
 <div id="proxy-screen" class="overlay hidden">
   <div style="font-size:20px;font-weight:700;margin-bottom:6px">🛡️ URL del Worker</div>
   <div style="font-size:13px;color:#777;line-height:1.6;margin-bottom:16px;max-width:320px">
@@ -90,7 +90,7 @@
   <button class="btn-p" onclick="saveProxyUrl()">Guardar y comenzar</button>
   <button class="btn-s" onclick="showScreen('setup-screen')">← Volver</button>
 </div>
- 
+
 <div id="app" style="display:none">
   <div style="padding:max(env(safe-area-inset-top),28px) 20px 16px;background:linear-gradient(180deg,rgba(99,179,237,.06) 0%,transparent 100%)">
     <div style="display:flex;justify-content:space-between;align-items:flex-start">
@@ -117,49 +117,49 @@
   </div>
   <div id="tab-content" style="padding:0 20px 100px"></div>
 </div>
- 
+
 <input type="file" id="photoInput" accept="image/*" capture="environment" style="display:none" onchange="handlePhoto(event)"/>
 <div id="toast" class="toast"></div>
- 
+
 <script>
 'use strict';
- 
+
 const BASELINE = {
   date:"05/03/2026",weight:77.2,fatPct:21.8,fatKg:16.8,
   leanKg:60.4,leanPct:78.2,imc:26.7,iac:28,rcq:0.83,
   measurements:{bicepContr:37,coxa:55,panturrilha:35,torax:98,cintura:86,abdome:97,quadril:104,ombro:124}
 };
- 
+
 const COST_PER_CALL = {
   "gemini-2.5-flash-preview-04-17":0.0001,
   "gemini-2.0-flash":0.000075,
   "gemini-2.0-flash-lite":0.00004
 };
- 
+
 const DAILY_BUDGET = 0.05;
- 
+
 let S = {
   tab:0, meals:[], evals:[], loading:false,
   showEvalForm:false,
   newEval:{weight:"",fatPct:"",leanKg:"",cintura:"",abdome:"",quadril:""}
 };
- 
+
 const LS = {
   get:(k,fb=null)=>{ try{const v=localStorage.getItem(k);return v?JSON.parse(v):fb}catch{return fb} },
   set:(k,v)=>{ try{localStorage.setItem(k,JSON.stringify(v))}catch{} },
   del:(k)=>{ try{localStorage.removeItem(k)}catch{} }
 };
- 
+
 function loadData(){
   S.meals = LS.get("ih-meals",[]);
   S.evals = LS.get("ih-evals") || [{...BASELINE,id:1,label:"Evaluación #12 (base)"}];
 }
- 
+
 function saveData(){
   LS.set("ih-meals", S.meals.map(({imgData,...r})=>r));
   LS.set("ih-evals", S.evals);
 }
- 
+
 function getCosts(){
   const today = new Date().toDateString();
   const d = LS.get("ih-costs",{date:"",calls:0,usd:0});
@@ -180,7 +180,7 @@ function updateBadges(){
   if(cb) cb.textContent = `Hoy: $${d.usd.toFixed(4)} · ${d.calls} análisis`;
   if(mb) mb.textContent = model;
 }
- 
+
 function getCfg(){
   return {
     mode:  LS.get("ih-mode",null),
@@ -216,7 +216,7 @@ function startApp(){
   loadData(); updateBadges(); render();
   toast("✅ Listo");
 }
- 
+
 // PROMPT corto — menos tokens de entrada = más espacio para la respuesta JSON
 // Prompt largo era la causa raíz: Gemini truncaba el JSON cuando
 // el prompt consumía demasiados tokens, resultando en valores 0.
@@ -224,16 +224,16 @@ const PROMPT = `Analiza el alimento o bebida de la imagen. Usuario: 20 años, 77
 Solo responde con este JSON (sin texto extra, sin markdown, sin bloques de código):
 {"nombre":"","porciones":"","calorias":0,"proteina":0,"carbos":0,"grasa":0,"fibra":0,"score":0,"clasificacion":"","positivo":"","feedback":"","sugerencia":"","confianza":""}
 IMPORTANTE: calorias/proteina/carbos/grasa NUNCA son 0 salvo agua pura. Siempre estima. score 1-10 (10=ideal para bajar grasa).`;
- 
+
 async function callGemini(b64, mime){
   const cfg = getCfg();
- 
+
   const costs = getCosts();
   if(costs.usd >= DAILY_BUDGET){
     if(!confirm(`⚠️ Límite diario: $${costs.usd.toFixed(4)} USD.\n¿Continuar?`))
       throw new Error("Cancelado por límite de presupuesto");
   }
- 
+
   if(cfg.mode==="proxy"){
     const res = await fetch(cfg.proxy,{
       method:"POST",
@@ -244,7 +244,7 @@ async function callGemini(b64, mime){
     const data = await res.json();
     return parseResponse(data.result||data.text||JSON.stringify(data));
   }
- 
+
   // ── FIX 2: URL corregida de /v1/ a /v1beta/ ──
   // /v1/ no soporta modelos Gemini con imágenes.
   // /v1beta/ es la versión correcta para generateContent con multimodal.
@@ -256,7 +256,7 @@ async function callGemini(b64, mime){
     "gemini-1.5-flash"
   ];
   const modelsToTry = [...new Set(FALLBACK_MODELS)];
- 
+
   let lastError;
   for(const m of modelsToTry){
     // ✅ CORRECCIÓN CLAVE: /v1beta/ en lugar de /v1/
@@ -269,16 +269,17 @@ async function callGemini(b64, mime){
           {text:PROMPT},
           {inline_data:{mime_type:mime,data:b64}}
         ]}],
-        // FIX 2: texto antes que imagen — Gemini interpreta mejor la instrucción
-        // FIX 3: maxOutputTokens subido a 800 — evita JSON truncado
-        // temperature 0.1 — más determinístico, menos creatividad en los números
+        // texto antes que imagen — Gemini interpreta mejor la instrucción
+        // maxOutputTokens 1500 — el JSON necesita ~400-600 tokens, 800 era insuficiente
+        // responseMimeType fuerza JSON puro desde la API, sin texto extra
         generationConfig:{
           temperature:0.1,
-          maxOutputTokens:800
+          maxOutputTokens:1500,
+          responseMimeType:"application/json"
         }
       })
     });
- 
+
     if(res.ok){
       if(m !== selectedModel){ LS.set("ih-model", m); toast(`ℹ️ Usando ${m}`); }
       addCost(m); updateBadges();
@@ -286,17 +287,14 @@ async function callGemini(b64, mime){
       const parts = data.candidates?.[0]?.content?.parts || [];
       const raw = parts.map(p => p.text || "").join("");
       const parsed = parseResponse(raw);
-      // FIX 4: Si detecta nombre pero macros = 0, algo salió mal con el JSON
-      // En ese caso lanzamos error para que el usuario reintente con otra foto
-      const allZero = parsed.calorias===0 && parsed.proteina===0 && parsed.carbos===0;
-      const isWater = parsed.nombre.toLowerCase().includes("agua");
-      if(allZero && !isWater){
-        console.warn("Respuesta con macros en 0, raw:", raw);
-        throw new Error("La IA no pudo estimar los macros. Intenta con mejor iluminación o más cerca del alimento.");
+      // Si macros siguen en 0 después del parser, loguear para debug pero no bloquear
+      // El usuario puede ver el resultado con confianza "baja" y reintentar si quiere
+      if(parsed.calorias===0 && parsed.proteina===0 && !parsed.nombre.toLowerCase().includes("agua")){
+        console.warn("⚠️ Macros en 0 después del parser. Raw truncado:", raw.slice(0,200));
       }
       return parsed;
     }
- 
+
     const errData = await res.json().catch(()=>({}));
     lastError = errData.error?.message || "Error desconocido";
     if(!lastError.includes("not found") && !lastError.includes("no longer") && !lastError.includes("not supported")){
@@ -304,7 +302,7 @@ async function callGemini(b64, mime){
     }
     console.warn(`Modelo ${m} no disponible, probando siguiente...`);
   }
- 
+
   const msg = lastError || "Error";
   if(msg.includes("quota"))             throw new Error("Cuota agotada. Verifica tu plan en Google Cloud.");
   if(msg.includes("API_KEY"))           throw new Error("API key inválida. Verifica en ai.google.dev");
@@ -312,29 +310,44 @@ async function callGemini(b64, mime){
   if(msg.includes("not found")||msg.includes("not supported")) throw new Error("Modelo no disponible. Cambia el modelo en ⚙️ Config.");
   throw new Error(msg);
 }
- 
+
 function parseResponse(raw){
   if(!raw) throw new Error("Respuesta vacía de la IA");
-  // Intento 1: parseo directo limpiando backticks
+
+  // Intento 1: parseo directo (caso ideal con responseMimeType:json)
   try{ return validate(JSON.parse(raw.replace(/```json|```/g,"").trim())); }catch{}
-  // Intento 2: extraer bloque {} con regex
+
+  // Intento 2: extraer bloque {} completo
   try{ const m=raw.match(/\{[\s\S]*\}/); if(m) return validate(JSON.parse(m[0])); }catch{}
-  // Intento 3: extracción campo por campo como último recurso
-  const str=(k)=>{ const m=raw.match(new RegExp(`"${k}"\\s*:\\s*"([^"]+)"`)); return m?m[1]:null; };
-  const num=(k)=>{ const m=raw.match(new RegExp(`"${k}"\\s*:\\s*([\\d.]+)`)); return m?parseFloat(m[1]):0; };
+
+  // Intento 3: el JSON está truncado — completarlo antes de parsear
+  // Esto pasa cuando el texto de la respuesta (ej: nombre largo) supera tokens
+  try{
+    let fixed = raw.replace(/```json|```/g,"").trim();
+    // Cerrar strings abiertas
+    const openStr = (fixed.match(/"/g)||[]).length % 2 !== 0;
+    if(openStr) fixed += '"';
+    // Cerrar el objeto JSON si falta la llave
+    if(!fixed.trimEnd().endsWith("}")) fixed += "}";
+    return validate(JSON.parse(fixed));
+  }catch{}
+
+  // Intento 4: extracción campo por campo como último recurso
+  const str=(k)=>{ const m=raw.match(new RegExp('"'+k+'"\s*:\s*"([^"]*)')); return m?m[1]:null; };
+  const num=(k)=>{ const m=raw.match(new RegExp('"'+k+'"\s*:\s*([\d.]+)')); return m?parseFloat(m[1]):0; };
   return validate({
-    nombre:str("nombre")||"Alimento no identificado",
-    porciones:str("porciones")||"1 porción",
-    calorias:num("calorias"),proteina:num("proteina"),
-    carbos:num("carbos"),grasa:num("grasa"),fibra:num("fibra"),
-    score:num("score")||5,clasificacion:str("clasificacion")||"Regular",
-    positivo:str("positivo")||"",
-    feedback:str("feedback")||"No se pudo analizar correctamente.",
-    sugerencia:str("sugerencia")||"Intenta con una foto más clara y con mejor iluminación.",
-    confianza:"baja"
+    nombre:     str("nombre")||"Alimento no identificado",
+    porciones:  str("porciones")||"1 porción",
+    calorias:   num("calorias"), proteina: num("proteina"),
+    carbos:     num("carbos"),   grasa:    num("grasa"), fibra: num("fibra"),
+    score:      num("score")||5, clasificacion: str("clasificacion")||"Regular",
+    positivo:   str("positivo")||"",
+    feedback:   str("feedback")||"Análisis incompleto por respuesta truncada.",
+    sugerencia: str("sugerencia")||"Intenta de nuevo.",
+    confianza:  "baja"
   });
 }
- 
+
 function validate(d){
   return {
     nombre:      String(d.nombre||"Alimento"),
@@ -352,7 +365,7 @@ function validate(d){
     confianza:   String(d.confianza||"media")
   };
 }
- 
+
 function compress(file,maxW=800,q=0.78){
   return new Promise(res=>{
     const img=new Image(), url=URL.createObjectURL(file);
@@ -368,7 +381,7 @@ function compress(file,maxW=800,q=0.78){
     img.src=url;
   });
 }
- 
+
 async function handlePhoto(e){
   const file=e.target.files[0]; if(!file) return;
   const cfg=getCfg();
@@ -392,7 +405,7 @@ async function handlePhoto(e){
   }
   S.loading=false; renderTab(); e.target.value="";
 }
- 
+
 function switchTab(i,btn){
   S.tab=i;
   document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active"));
@@ -413,10 +426,10 @@ function renderTab(){
   if(S.tab===2) el.innerHTML=tabProgreso(latest);
   if(S.tab===3) el.innerHTML=tabEvals();
 }
- 
+
 const sc=s=>s>=8?"#4ade80":s>=5?"#facc15":"#f87171";
 const cc=c=>c==="alta"?"#4ade80":c==="media"?"#facc15":"#f87171";
- 
+
 function mcard(label,val,unit,sub,color){
   return `<div class="card" style="display:flex;flex-direction:column;gap:4px">
     <span style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:1px">${label}</span>
@@ -424,7 +437,7 @@ function mcard(label,val,unit,sub,color){
     ${sub?`<span style="font-size:12px;color:#666">${sub}</span>`:""}
   </div>`;
 }
- 
+
 function pbar(label,val,max,color,unit,goal=""){
   const pct=Math.min((val/max)*100,100);
   return `<div style="margin-bottom:14px">
@@ -437,7 +450,7 @@ function pbar(label,val,max,color,unit,goal=""){
     </div>
   </div>`;
 }
- 
+
 function tabResumen(latest,mac,count){
   const wd=S.evals.length>1?(latest.weight-BASELINE.weight).toFixed(1):null;
   return `
@@ -468,7 +481,7 @@ function tabResumen(latest,mac,count){
       </div>
     </div>`;
 }
- 
+
 function tabComidas(){
   const cards=S.meals.map(m=>`
     <div class="meal-card" style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:16px;overflow:hidden;margin-bottom:12px">
@@ -496,7 +509,7 @@ function tabComidas(){
         <div style="font-size:10px;color:#444">${m.clasificacion||""} · Confianza: <span style="color:${cc(m.confianza)}">${m.confianza||"media"}</span></div>
       </div>
     </div>`).join("");
- 
+
   return `
     <button onclick="document.getElementById('photoInput').click()"
       style="background:linear-gradient(135deg,#63b3ed,#4299e1);border:none;border-radius:16px;padding:18px;color:#fff;font-size:15px;font-weight:700;width:100%;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 4px 20px rgba(99,179,237,.25);margin-bottom:16px">
@@ -506,7 +519,7 @@ function tabComidas(){
     ${cards}
     ${S.meals.length===0&&!S.loading?`<div style="text-align:center;padding:48px 0;color:#333"><div style="font-size:44px;margin-bottom:12px">🍽️</div><div style="font-size:14px;color:#444">Saca una foto de tu próxima comida</div><div style="font-size:12px;color:#333;margin-top:6px">La IA calcula macros y te da feedback</div></div>`:""}`;
 }
- 
+
 function tabProgreso(latest){
   const barchart=(data,vFn,cFn,lFn,ex=2)=>{
     if(!data.length) return '<div style="color:#333;font-size:13px;text-align:center;padding:16px">Sin datos</div>';
@@ -549,7 +562,7 @@ function tabProgreso(latest){
       ${pbar("Magra → 62 kg",latest.leanKg,62,"#4ade80"," kg","")}
     </div>`;
 }
- 
+
 function tabEvals(){
   const cards=S.evals.map((e,i)=>{
     const last=i===S.evals.length-1;
@@ -567,7 +580,7 @@ function tabEvals(){
       </div>
     </div>`;
   }).join("");
- 
+
   const form=S.showEvalForm?`
     <div class="card">
       <div style="font-weight:600;margin-bottom:14px">➕ Nueva evaluación</div>
@@ -582,10 +595,10 @@ function tabEvals(){
       </div>
     </div>`
   :`<button onclick="S.showEvalForm=true;renderTab()" style="background:rgba(99,179,237,.07);border:1px dashed rgba(99,179,237,.2);border-radius:16px;padding:18px;color:#63b3ed;font-size:14px;font-weight:600;width:100%">+ Registrar nueva evaluación</button>`;
- 
+
   return cards+form;
 }
- 
+
 function addEval(){
   const w=parseFloat(S.newEval.weight);
   if(!w||w<30||w>250){ toast("⚠️ Peso inválido","err"); return; }
@@ -602,7 +615,7 @@ function addEval(){
   S.newEval={weight:"",fatPct:"",leanKg:"",cintura:"",abdome:"",quadril:""};
   S.showEvalForm=false; saveData(); renderTab(); toast("✅ Evaluación guardada");
 }
- 
+
 function toast(msg,type="ok"){
   const el=document.getElementById("toast");
   el.textContent=msg;
@@ -611,7 +624,7 @@ function toast(msg,type="ok"){
   clearTimeout(window._tt);
   window._tt=setTimeout(()=>el.classList.remove("show"),3000);
 }
- 
+
 if("serviceWorker" in navigator){
   window.addEventListener("load",()=>
     navigator.serviceWorker.register("./service-worker.js")
@@ -619,7 +632,7 @@ if("serviceWorker" in navigator){
       .catch(e=>console.warn("SW:",e))
   );
 }
- 
+
 window.addEventListener("DOMContentLoaded",()=>{
   getCfg().mode ? startApp() : showScreen("setup-screen");
 });

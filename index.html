@@ -70,7 +70,7 @@
   <div style="width:100%;margin-bottom:10px">
     <div style="font-size:12px;color:#666;margin-bottom:5px;text-align:left">Modelo</div>
     <select id="modelSelect" class="big-input" style="margin:0">
-      <option value="gemini-2.5-flash-preview-04-17">gemini-2.5-flash — Recomendado 🔥</option>
+      <option value="gemini-2.5-flash">gemini-2.5-flash — Recomendado 🔥</option>
       <option value="gemini-2.0-flash">gemini-2.0-flash — Estable ✅</option>
       <option value="gemini-2.0-flash-lite">gemini-2.0-flash-lite — Más barato</option>
     </select>
@@ -131,7 +131,7 @@ const BASELINE = {
 };
 
 const COST_PER_CALL = {
-  "gemini-2.5-flash-preview-04-17":0.0001,
+  "gemini-2.5-flash":0.0001,
   "gemini-2.0-flash":0.000075,
   "gemini-2.0-flash-lite":0.00004
 };
@@ -174,7 +174,7 @@ function addCost(model){
 }
 function updateBadges(){
   const d = getCosts();
-  const model = LS.get("ih-model","gemini-2.0-flash");
+  const model = LS.get("ih-model","gemini-2.5-flash");
   const cb = document.getElementById("cost-badge");
   const mb = document.getElementById("model-badge");
   if(cb) cb.textContent = `Hoy: $${d.usd.toFixed(4)} · ${d.calls} análisis`;
@@ -186,7 +186,7 @@ function getCfg(){
     mode:  LS.get("ih-mode",null),
     key:   LS.get("ih-key",null),
     proxy: LS.get("ih-proxy",null),
-    model: LS.get("ih-model","gemini-2.0-flash")
+    model: LS.get("ih-model","gemini-2.5-flash")
   };
 }
 function showScreen(id){
@@ -249,12 +249,14 @@ async function callGemini(b64, mime){
   // ── FIX 2: URL corregida de /v1/ a /v1beta/ ──
   // /v1/ no soporta modelos Gemini con imágenes.
   // /v1beta/ es la versión correcta para generateContent con multimodal.
-  const selectedModel = cfg.model || "gemini-2.0-flash";
+    const selectedModel = cfg.model || "gemini-2.5-flash";
+  // Nombres exactos verificados contra la API de esta cuenta
   const FALLBACK_MODELS = [
     selectedModel,
+    "gemini-2.5-flash",
     "gemini-2.0-flash",
-    "gemini-2.0-flash-lite",
-    "gemini-1.5-flash"
+    "gemini-2.0-flash-001",
+    "gemini-2.0-flash-lite"
   ];
   const modelsToTry = [...new Set(FALLBACK_MODELS)];
 

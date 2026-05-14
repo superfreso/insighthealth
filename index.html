@@ -317,36 +317,68 @@ async function callGemini(b64, mime){
 function parseResponse(raw){
   if(!raw) throw new Error("Respuesta vacía de la IA");
 
-  // Intento 1: parseo directo (caso ideal con responseMimeType:json)
+  // Helper: extrae número de un campo aunque el JSON esté incompleto
+  const num = (k) => {
+    const m = raw.match(new RegExp('"' + k + '"\s*:\s*([\d.]+)'));
+    return m ? parseFloat(m[1]) : 0;
+  };
+  // Helper: extrae string de un campo aunque el JSON esté incompleto
+  const str = (k) => {
+    const m = raw.match(new RegExp('"' + k + '"\s*:\s*"([^"]*)"'));
+    return m ? m[1] : null;
+  };
+
+  // Intento 1: parseo directo (JSON completo y válido)
   try{ return validate(JSON.parse(raw.replace(/```json|```/g,"").trim())); }catch{}
 
-  // Intento 2: extraer bloque {} completo
+  // Intento 2: extraer bloque {} completo con regex
   try{ const m=raw.match(/\{[\s\S]*\}/); if(m) return validate(JSON.parse(m[0])); }catch{}
 
-  // Intento 3: el JSON está truncado — completarlo antes de parsear
-  // Esto pasa cuando el texto de la respuesta (ej: nombre largo) supera tokens
+  // Intento 3: JSON truncado — si los números clave ya llegaron, usarlos directo
+  // Este es el caso exacto del bug: calorias/proteina/carbos/grasa están en el raw
+  // pero el JSON falla porque se cortó después de grasa o fibra
+  const cal = num("calorias");
+  const prot = num("proteina");
+  const carb = num("carbos");
+  const fat = num("grasa");
+  if(cal > 0 || prot > 0 || carb > 0 || fat > 0){
+    // Tenemos los números importantes — construir objeto con lo que hay
+    return validate({
+      nombre:        str("nombre") || "Alimento",
+      porciones:     str("porciones") || "1 porción",
+      calorias:      cal,
+      proteina:      prot,
+      carbos:        carb,
+      grasa:         fat,
+      fibra:         num("fibra"),
+      score:         num("score") || 5,
+      clasificacion: str("clasificacion") || "Regular",
+      positivo:      str("positivo") || "",
+      feedback:      str("feedback") || "",
+      sugerencia:    str("sugerencia") || "",
+      confianza:     str("confianza") || "media"
+    });
+  }
+
+  // Intento 4: intentar cerrar el JSON truncado y parsear
   try{
     let fixed = raw.replace(/```json|```/g,"").trim();
-    // Cerrar strings abiertas
     const openStr = (fixed.match(/"/g)||[]).length % 2 !== 0;
     if(openStr) fixed += '"';
-    // Cerrar el objeto JSON si falta la llave
     if(!fixed.trimEnd().endsWith("}")) fixed += "}";
     return validate(JSON.parse(fixed));
   }catch{}
 
-  // Intento 4: extracción campo por campo como último recurso
-  const str=(k)=>{ const m=raw.match(new RegExp('"'+k+'"\s*:\s*"([^"]*)')); return m?m[1]:null; };
-  const num=(k)=>{ const m=raw.match(new RegExp('"'+k+'"\s*:\s*([\d.]+)')); return m?parseFloat(m[1]):0; };
+  // Intento 5: último recurso — todo lo que podamos extraer
   return validate({
-    nombre:     str("nombre")||"Alimento no identificado",
-    porciones:  str("porciones")||"1 porción",
-    calorias:   num("calorias"), proteina: num("proteina"),
-    carbos:     num("carbos"),   grasa:    num("grasa"), fibra: num("fibra"),
-    score:      num("score")||5, clasificacion: str("clasificacion")||"Regular",
-    positivo:   str("positivo")||"",
-    feedback:   str("feedback")||"Análisis incompleto por respuesta truncada.",
-    sugerencia: str("sugerencia")||"Intenta de nuevo.",
+    nombre:     str("nombre") || "Alimento no identificado",
+    porciones:  str("porciones") || "1 porción",
+    calorias:   cal, proteina: prot, carbos: carb, grasa: fat,
+    fibra:      num("fibra"), score: num("score") || 5,
+    clasificacion: str("clasificacion") || "Regular",
+    positivo:   str("positivo") || "",
+    feedback:   str("feedback") || "Respuesta incompleta de la IA.",
+    sugerencia: str("sugerencia") || "",
     confianza:  "baja"
   });
 }

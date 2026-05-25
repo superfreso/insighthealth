@@ -4,7 +4,7 @@
 // Este archivo corre en segundo plano en el navegador.
 // Su trabajo: guardar copias de la app para que funcione sin internet.
 
-const CACHE_NAME = "insighthealth-v1";
+const CACHE_NAME = "NutriBem -v2";
 
 // Archivos que se guardan en caché al instalar la app
 const FILES_TO_CACHE = [

@@ -6,116 +6,234 @@
   <meta name="mobile-web-app-capable" content="yes"/>
   <meta name="apple-mobile-web-app-capable" content="yes"/>
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
-  <meta name="apple-mobile-web-app-title" content="InsightHealth"/>
-  <meta name="theme-color" content="#0a0a0f"/>
+  <meta name="apple-mobile-web-app-title" content="NutriBem"/>
+  <meta name="theme-color" content="#f5f2ed"/>
   <link rel="manifest" href="./manifest.json"/>
   <link rel="apple-touch-icon" href="./icon-192.png"/>
-  <title>InsightHealth</title>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <title>NutriBem</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
-    body{background:#0a0a0f;color:#f0f0f0;font-family:'Outfit','Segoe UI',sans-serif;min-height:100vh;min-height:100dvh}
-    ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:#111}::-webkit-scrollbar-thumb{background:#333;border-radius:4px}
-    .tab-btn{background:none;border:none;cursor:pointer;padding:10px 16px;border-radius:12px;font-family:inherit;font-size:13px;font-weight:600;transition:all .2s;white-space:nowrap;color:#666}
-    .tab-btn.active{background:rgba(99,179,237,.15);color:#63b3ed}
-    .tab-btn:hover:not(.active){color:#aaa;background:rgba(255,255,255,.04)}
-    .eval-input{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:10px 14px;color:#fff;font-family:inherit;font-size:14px;width:100%}
-    .eval-input:focus{border-color:#63b3ed;outline:none}
-    .meal-card{animation:fadeUp .4s ease both}
-    @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
-    .pulse{animation:pulse 2s infinite}
-    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
-    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-    .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
-    .card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:18px 20px}
-    button{font-family:inherit;cursor:pointer}
-    .overlay{position:fixed;inset:0;background:#0a0a0f;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center;overflow-y:auto}
+    body{background:#faf8f4;color:#2d3526;font-family:'DM Sans','Segoe UI',sans-serif;min-height:100vh;min-height:100dvh}
+
+    /* ── OVERLAYS (configuración) ── */
+    .overlay{position:fixed;inset:0;background:#f5f2ed;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center;overflow-y:auto}
     .overlay.hidden{display:none}
-    .big-input{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:12px;padding:14px 16px;color:#fff;font-family:inherit;font-size:14px;width:100%;margin:8px 0}
-    .big-input:focus{border-color:#63b3ed;outline:none}
-    .btn-p{background:linear-gradient(135deg,#63b3ed,#4299e1);border:none;border-radius:14px;padding:15px;color:#fff;font-size:14px;font-weight:700;width:100%;margin-bottom:8px}
-    .btn-s{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:13px;color:#aaa;font-size:13px;width:100%}
-    .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1a1f2e;border:1px solid #63b3ed;border-radius:12px;padding:11px 18px;font-size:13px;color:#fff;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;max-width:90vw;overflow:hidden;text-overflow:ellipsis}
+    .app-logo{font-size:11px;letter-spacing:3px;color:#8a9a7a;text-transform:uppercase;font-weight:500;margin-bottom:20px}
+    .setup-title{font-family:'DM Serif Display',serif;font-size:28px;color:#2d3526;margin-bottom:8px}
+    .setup-sub{font-size:13px;color:#a09890;margin-bottom:28px}
+    .setup-option{background:#fff;border:1px solid #ede9e2;border-radius:18px;padding:18px;width:100%;margin-bottom:12px;text-align:left;cursor:pointer;transition:border-color .2s}
+    .setup-option:hover{border-color:#8a9a7a}
+    .setup-option-title{font-weight:500;font-size:14px;color:#2d3526;display:flex;justify-content:space-between;margin-bottom:5px}
+    .setup-option-desc{font-size:12px;color:#a09890;line-height:1.5}
+    .setup-badge{font-size:10px;border-radius:99px;padding:2px 10px;font-weight:500}
+    .badge-warm{background:#f5f0e8;color:#8a6a3a}
+    .badge-green{background:#e8ede0;color:#4a5e3a}
+    .big-input{background:#fff;border:1px solid #ede9e2;border-radius:12px;padding:14px 16px;color:#2d3526;font-family:'DM Sans',sans-serif;font-size:14px;width:100%;margin:8px 0;transition:border-color .2s}
+    .big-input:focus{border-color:#8a9a7a;outline:none}
+    .btn-primary{background:#4a5e3a;border:none;border-radius:14px;padding:15px;color:#f5f2ed;font-size:14px;font-weight:500;width:100%;margin-bottom:10px;font-family:'DM Sans',sans-serif;cursor:pointer;letter-spacing:0.3px;transition:background .2s}
+    .btn-primary:hover{background:#3a4e2a}
+    .btn-secondary{background:none;border:1px solid #ede9e2;border-radius:14px;padding:13px;color:#a09890;font-size:13px;width:100%;font-family:'DM Sans',sans-serif;cursor:pointer}
+    .input-label{font-size:12px;color:#a09890;margin-bottom:5px;text-align:left;width:100%;display:block}
+
+    /* ── APP PRINCIPAL ── */
+    #app{display:none;padding-bottom:80px}
+
+    /* ── HEADER ── */
+    .header{padding:max(env(safe-area-inset-top),28px) 20px 16px;background:#f5f2ed}
+    .header-row{display:flex;justify-content:space-between;align-items:flex-start}
+    .app-name{font-size:10px;letter-spacing:3px;color:#8a9a7a;text-transform:uppercase;font-weight:500;margin-bottom:4px}
+    .greeting{font-family:'DM Serif Display',serif;font-size:26px;color:#2d3526}
+    .greeting em{color:#8a9a7a;font-style:normal}
+    .header-sub{font-size:11px;color:#b0a898;margin-top:2px}
+    .config-btn{background:#fff;border:1px solid #ede9e2;border-radius:10px;padding:8px 12px;color:#8a8078;font-size:11px;font-family:'DM Sans',sans-serif;cursor:pointer}
+    .header-meta{display:flex;gap:12px;margin-top:10px;flex-wrap:wrap;align-items:center}
+    .meta-dot{width:6px;height:6px;background:#8a9a7a;border-radius:50%;flex-shrink:0}
+    .meta-text{font-size:11px;color:#8a9a7a}
+    .cost-text{font-size:11px;color:#b0a898;font-family:'DM Sans',monospace}
+
+    /* ── CONTENIDO ── */
+    #tab-content{padding:16px 20px 24px}
+
+    /* ── TARJETAS MÉTRICAS ── */
+    .metric-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}
+    .metric-card{background:#fff;border-radius:16px;padding:16px;border:1px solid #ede9e2}
+    .metric-label{font-size:10px;color:#b0a898;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+    .metric-value{font-family:'DM Serif Display',serif;font-size:26px;color:#2d3526;line-height:1}
+    .metric-unit{font-size:12px;color:#8a9a7a;font-family:'DM Sans',sans-serif;margin-left:2px}
+    .metric-sub{font-size:10px;color:#c0b8b0;margin-top:4px}
+
+    /* ── BARRAS ── */
+    .macro-card{background:#fff;border-radius:16px;padding:18px;border:1px solid #ede9e2;margin-bottom:14px}
+    .section-title{font-size:10px;letter-spacing:2px;color:#a09890;text-transform:uppercase;font-weight:500;margin-bottom:14px}
+    .bar-row{margin-bottom:12px}
+    .bar-header{display:flex;justify-content:space-between;margin-bottom:6px}
+    .bar-name{font-size:13px;color:#4a5e3a;font-weight:500}
+    .bar-val{font-size:12px;color:#8a8078}
+    .bar-bg{background:#f0ece6;border-radius:99px;height:5px}
+    .bar-fill{height:5px;border-radius:99px;transition:width .5s ease}
+
+    /* ── TARJETA OBJETIVO ── */
+    .goal-card{background:#e8ede0;border-radius:16px;padding:18px;border:1px solid #d4d9c8;margin-bottom:14px}
+    .goal-title{font-size:10px;letter-spacing:2px;color:#6b7a5a;text-transform:uppercase;font-weight:500;margin-bottom:8px}
+    .goal-text{font-size:13px;color:#2d3526;line-height:1.6}
+    .goal-text strong{color:#4a5e3a}
+    .tag-row{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+    .tag{background:rgba(255,255,255,0.65);border-radius:99px;padding:4px 12px;font-size:10px;color:#6b7a5a;border:1px solid #c4d4b4}
+
+    /* ── BOTÓN ANALIZAR ── */
+    .btn-analyze{background:#4a5e3a;color:#f5f2ed;border:none;border-radius:16px;padding:18px;font-size:15px;font-weight:500;width:100%;display:flex;align-items:center;justify-content:center;gap:10px;font-family:'DM Sans',sans-serif;cursor:pointer;margin-bottom:18px;letter-spacing:0.3px;transition:background .2s}
+    .btn-analyze:hover{background:#3a4e2a}
+
+    /* ── TARJETAS DE COMIDAS ── */
+    .meal-card{background:#fff;border-radius:16px;overflow:hidden;border:1px solid #ede9e2;margin-bottom:12px;animation:fadeUp .35s ease both}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+    .meal-top{display:flex}
+    .meal-img{width:90px;height:90px;object-fit:cover;flex-shrink:0}
+    .meal-img-placeholder{width:90px;height:90px;background:#f0ece6;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0}
+    .meal-info{padding:12px;flex:1;min-width:0}
+    .meal-name{font-size:14px;font-weight:500;color:#2d3526;line-height:1.3;margin-bottom:3px}
+    .meal-time{font-size:10px;color:#b0a898;margin-bottom:8px}
+    .meal-macros{display:flex;gap:6px;flex-wrap:wrap}
+    .macro-chip{font-size:10px;color:#6b7a5a;background:#f0ece6;border-radius:99px;padding:3px 9px}
+    .score-badge{min-width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;flex-shrink:0;margin:auto 12px auto 0}
+    .meal-bottom{padding:12px;border-top:1px solid #f5f2ed}
+    .meal-positive{font-size:12px;color:#4a7a3a;margin-bottom:6px}
+    .meal-feedback{font-size:12px;color:#7a7268;line-height:1.5;margin-bottom:6px}
+    .meal-tip{font-size:11px;color:#4a5e3a;background:#eef3e8;border-radius:8px;padding:7px 10px}
+    .meal-conf{font-size:10px;color:#b0a898;margin-top:6px}
+
+    /* ── GRÁFICAS ── */
+    .chart-card{background:#fff;border-radius:16px;padding:18px;border:1px solid #ede9e2;margin-bottom:14px}
+    .bars-container{display:flex;align-items:flex-end;gap:8px;height:88px}
+    .bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px}
+    .bar-col-val{font-size:9px;color:#8a9a7a;font-weight:500;text-align:center}
+    .bar-col-bar{width:100%;border-radius:4px 4px 0 0}
+    .bar-col-date{font-size:8px;color:#c0b8b0;text-align:center}
+
+    /* ── EVALUACIONES ── */
+    .eval-card{border-radius:16px;padding:18px;border:1px solid #ede9e2;margin-bottom:12px;background:#fff}
+    .eval-card.latest{border-color:#8a9a7a;background:#f7faf4}
+    .eval-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px}
+    .eval-title{font-weight:500;font-size:14px;color:#2d3526}
+    .eval-date{font-size:11px;color:#b0a898;margin-top:2px}
+    .eval-badge{font-size:10px;background:#e8ede0;color:#4a5e3a;border-radius:99px;padding:3px 10px;font-weight:500}
+    .eval-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+    .eval-metric{text-align:center;background:#faf8f4;border-radius:12px;padding:10px 4px}
+    .eval-metric-val{font-family:'DM Serif Display',serif;font-size:18px;color:#2d3526}
+    .eval-metric-unit{font-size:10px;color:#a09890}
+    .eval-metric-label{font-size:10px;color:#b0a898;margin-top:2px}
+    .eval-input{background:#fff;border:1px solid #ede9e2;border-radius:10px;padding:10px 14px;color:#2d3526;font-family:'DM Sans',sans-serif;font-size:14px;width:100%;transition:border-color .2s}
+    .eval-input:focus{border-color:#8a9a7a;outline:none}
+    .btn-add-eval{background:none;border:1.5px dashed #c4d4b4;border-radius:16px;padding:16px;color:#6b7a5a;font-size:13px;width:100%;font-family:'DM Sans',sans-serif;cursor:pointer}
+
+    /* ── NAVBAR INFERIOR ── */
+    .navbar{position:fixed;bottom:0;left:0;right:0;background:#f5f2ed;border-top:1px solid #ede9e2;display:flex;padding:10px 0 max(env(safe-area-inset-bottom),14px);z-index:50}
+    .nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:2px 0}
+    .nav-icon{width:22px;height:22px;stroke:#c0b8b0;fill:none;stroke-width:1.5;transition:stroke .2s}
+    .nav-icon.active{stroke:#4a5e3a}
+    .nav-label{font-size:9px;color:#c0b8b0;letter-spacing:0.5px;transition:color .2s}
+    .nav-label.active{color:#4a5e3a}
+
+    /* ── TOAST ── */
+    .toast{position:fixed;bottom:88px;left:50%;transform:translateX(-50%);background:#2d3526;border-radius:12px;padding:11px 18px;font-size:13px;color:#f5f2ed;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;max-width:88vw;overflow:hidden;text-overflow:ellipsis}
     .toast.show{opacity:1}
+
+    /* ── LOADING ── */
+    .loading-box{text-align:center;padding:40px 0}
+    .pulse{animation:pulse 1.8s infinite}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+    .empty-box{text-align:center;padding:48px 0}
+    .empty-icon{font-size:44px;margin-bottom:14px}
+    .empty-title{font-size:14px;color:#8a8078}
+    .empty-sub{font-size:12px;color:#c0b8b0;margin-top:6px}
   </style>
 </head>
 <body>
 
+<!-- PANTALLA: selección de modo -->
 <div id="setup-screen" class="overlay">
-  <div style="font-size:11px;color:#63b3ed;letter-spacing:3px;text-transform:uppercase;margin-bottom:14px">InsightHealth</div>
-  <div style="font-size:22px;font-weight:700;margin-bottom:6px">Configuración inicial</div>
-  <div style="font-size:13px;color:#666;margin-bottom:24px">¿Cómo quieres conectar la IA?</div>
-  <div onclick="showScreen('direct-screen')" style="background:rgba(99,179,237,.07);border:1px solid rgba(99,179,237,.2);border-radius:16px;padding:16px;width:100%;margin-bottom:10px;text-align:left;cursor:pointer">
-    <div style="display:flex;justify-content:space-between;margin-bottom:5px">
-      <span style="font-weight:600;font-size:14px">🔑 API Key directa</span>
-      <span style="font-size:10px;background:#facc1520;color:#facc15;border-radius:99px;padding:2px 8px">Recomendado</span>
-    </div>
-    <div style="font-size:12px;color:#777">Tu key de Gemini guardada en el celular. Gratis, funciona de inmediato.</div>
+  <div class="app-logo">nutribem</div>
+  <div class="setup-title">Configuração inicial</div>
+  <div class="setup-sub">Como deseja conectar a IA?</div>
+  <div class="setup-option" onclick="showScreen('direct-screen')">
+    <div class="setup-option-title">Conectar com API Key <span class="setup-badge badge-warm">Recomendado</span></div>
+    <div class="setup-option-desc">Sua key do Gemini salva no celular. Grátis, funciona imediatamente.</div>
   </div>
-  <div onclick="showScreen('proxy-screen')" style="background:rgba(74,222,128,.05);border:1px solid rgba(74,222,128,.15);border-radius:16px;padding:16px;width:100%;text-align:left;cursor:pointer">
-    <div style="display:flex;justify-content:space-between;margin-bottom:5px">
-      <span style="font-weight:600;font-size:14px">🛡️ Proxy Cloudflare</span>
-      <span style="font-size:10px;background:#4ade8020;color:#4ade80;border-radius:99px;padding:2px 8px">Seguro</span>
-    </div>
-    <div style="font-size:12px;color:#777">La key nunca aparece en el código. Requiere configurar un Worker (~10 min).</div>
+  <div class="setup-option" onclick="showScreen('proxy-screen')">
+    <div class="setup-option-title">Proxy Cloudflare <span class="setup-badge badge-green">Seguro</span></div>
+    <div class="setup-option-desc">A key nunca aparece no código. Requer um Worker gratuito (~10 min).</div>
   </div>
 </div>
 
+<!-- PANTALLA: API Key directa -->
 <div id="direct-screen" class="overlay hidden">
-  <div style="font-size:20px;font-weight:700;margin-bottom:6px">🔑 API Key de Gemini</div>
-  <div style="font-size:13px;color:#777;line-height:1.6;margin-bottom:16px;max-width:320px">
-    Ve a <strong style="color:#63b3ed">ai.google.dev</strong> → Get API key → Create API key
-  </div>
+  <div class="app-logo">nutribem</div>
+  <div class="setup-title">API Key do Gemini</div>
+  <div class="setup-sub">Acesse <strong style="color:#4a5e3a">aistudio.google.com/apikey</strong><br/>→ Create API key</div>
   <input class="big-input" type="password" id="directKeyInput" placeholder="AIzaSy..."/>
-  <div style="width:100%;margin-bottom:10px">
-    <div style="font-size:12px;color:#666;margin-bottom:5px;text-align:left">Modelo</div>
+  <div style="width:100%;margin-bottom:12px">
+    <span class="input-label">Modelo</span>
     <select id="modelSelect" class="big-input" style="margin:0">
-      <option value="gemini-2.5-flash">gemini-2.5-flash — Recomendado 🔥</option>
-      <option value="gemini-2.0-flash">gemini-2.0-flash — Estable ✅</option>
-      <option value="gemini-2.0-flash-lite">gemini-2.0-flash-lite — Más barato</option>
+      <option value="gemini-2.5-flash">gemini-2.5-flash — Recomendado</option>
+      <option value="gemini-2.0-flash">gemini-2.0-flash — Estável</option>
+      <option value="gemini-2.0-flash-lite">gemini-2.0-flash-lite — Mais barato</option>
     </select>
   </div>
-  <button class="btn-p" onclick="saveDirectKey()">Guardar y comenzar</button>
-  <button class="btn-s" onclick="showScreen('setup-screen')">← Volver</button>
-  <div style="font-size:11px;color:#444;margin-top:10px">La key se guarda solo en tu dispositivo</div>
+  <button class="btn-primary" onclick="saveDirectKey()">Salvar e começar</button>
+  <button class="btn-secondary" onclick="showScreen('setup-screen')">← Voltar</button>
+  <div style="font-size:11px;color:#c0b8b0;margin-top:12px">A key é salva apenas no seu dispositivo</div>
 </div>
 
+<!-- PANTALLA: Proxy -->
 <div id="proxy-screen" class="overlay hidden">
-  <div style="font-size:20px;font-weight:700;margin-bottom:6px">🛡️ URL del Worker</div>
-  <div style="font-size:13px;color:#777;line-height:1.6;margin-bottom:16px;max-width:320px">
-    Pega la URL de tu Cloudflare Worker.<br/>
-    <span style="color:#63b3ed">Ver guía incluida en el ZIP.</span>
-  </div>
+  <div class="app-logo">nutribem</div>
+  <div class="setup-title">URL do Worker</div>
+  <div class="setup-sub">Cole a URL do seu Cloudflare Worker.</div>
   <input class="big-input" type="url" id="proxyUrlInput" placeholder="https://mi-worker.usuario.workers.dev"/>
-  <button class="btn-p" onclick="saveProxyUrl()">Guardar y comenzar</button>
-  <button class="btn-s" onclick="showScreen('setup-screen')">← Volver</button>
+  <button class="btn-primary" onclick="saveProxyUrl()">Salvar e começar</button>
+  <button class="btn-secondary" onclick="showScreen('setup-screen')">← Voltar</button>
 </div>
 
-<div id="app" style="display:none">
-  <div style="padding:max(env(safe-area-inset-top),28px) 20px 16px;background:linear-gradient(180deg,rgba(99,179,237,.06) 0%,transparent 100%)">
-    <div style="display:flex;justify-content:space-between;align-items:flex-start">
+<!-- APP PRINCIPAL -->
+<div id="app">
+  <div class="header">
+    <div class="header-row">
       <div>
-        <div style="font-size:11px;color:#63b3ed;letter-spacing:3px;text-transform:uppercase;margin-bottom:4px">InsightHealth</div>
-        <div style="font-size:21px;font-weight:700">Hola, Edwar 👋</div>
-        <div style="font-size:12px;color:#444;margin-top:2px">Seguimiento desde 05/03/2026</div>
+        <div class="app-name">nutribem</div>
+        <div class="greeting">Olá, <em>Edwar</em> 👋</div>
+        <div class="header-sub">Monitoramento desde 05/03/2026</div>
       </div>
-      <button onclick="showScreen('setup-screen')" style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:8px 10px;color:#555;font-size:11px">⚙️ Config</button>
+      <button class="config-btn" onclick="showScreen('setup-screen')">⚙️ Config</button>
     </div>
-    <div style="display:flex;gap:12px;margin-top:10px;flex-wrap:wrap">
-      <div style="font-size:11px;color:#4ade80;display:flex;align-items:center;gap:5px">
-        <div style="width:5px;height:5px;background:#4ade80;border-radius:50%"></div>Datos guardados
-      </div>
-      <div id="cost-badge" style="font-size:11px;color:#555;font-family:'DM Mono',monospace"></div>
-      <div id="model-badge" style="font-size:11px;color:#444"></div>
+    <div class="header-meta">
+      <div class="meta-dot"></div>
+      <div class="meta-text">Dados salvos</div>
+      <div id="cost-badge" class="cost-text"></div>
     </div>
   </div>
-  <div style="display:flex;gap:4px;padding:0 16px 16px;overflow-x:auto;-webkit-overflow-scrolling:touch">
-    <button class="tab-btn active" onclick="switchTab(0,this)">📊 Resumen</button>
-    <button class="tab-btn" onclick="switchTab(1,this)">🍽️ Comidas</button>
-    <button class="tab-btn" onclick="switchTab(2,this)">📈 Progreso</button>
-    <button class="tab-btn" onclick="switchTab(3,this)">📋 Evaluaciones</button>
+
+  <div id="tab-content"></div>
+</div>
+
+<!-- NAVBAR INFERIOR (solo navegación) -->
+<div class="navbar" id="navbar" style="display:none">
+  <div class="nav-item" onclick="switchTab(0)">
+    <svg class="nav-icon active" id="ni0" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+    <div class="nav-label active" id="nl0">Resumo</div>
   </div>
-  <div id="tab-content" style="padding:0 20px 100px"></div>
+  <div class="nav-item" onclick="switchTab(1)">
+    <svg class="nav-icon" id="ni1" viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 010 8h-1M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+    <div class="nav-label" id="nl1">Refeições</div>
+  </div>
+  <div class="nav-item" onclick="switchTab(2)">
+    <svg class="nav-icon" id="ni2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+    <div class="nav-label" id="nl2">Progresso</div>
+  </div>
+  <div class="nav-item" onclick="switchTab(3)">
+    <svg class="nav-icon" id="ni3" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+    <div class="nav-label" id="nl3">Avaliações</div>
+  </div>
 </div>
 
 <input type="file" id="photoInput" accept="image/*" capture="environment" style="display:none" onchange="handlePhoto(event)"/>
@@ -124,290 +242,148 @@
 <script>
 'use strict';
 
-const BASELINE = {
-  date:"05/03/2026",weight:77.2,fatPct:21.8,fatKg:16.8,
-  leanKg:60.4,leanPct:78.2,imc:26.7,iac:28,rcq:0.83,
-  measurements:{bicepContr:37,coxa:55,panturrilha:35,torax:98,cintura:86,abdome:97,quadril:104,ombro:124}
-};
+const BASELINE={date:"05/03/2026",weight:77.2,fatPct:21.8,fatKg:16.8,leanKg:60.4,leanPct:78.2,imc:26.7,iac:28,rcq:0.83,measurements:{bicepContr:37,coxa:55,panturrilha:35,torax:98,cintura:86,abdome:97,quadril:104,ombro:124}};
+const COST_PER_CALL={"gemini-2.5-flash":0.0001,"gemini-2.0-flash":0.000075,"gemini-2.0-flash-lite":0.00004,"gemini-2.0-flash-001":0.000075};
+const DAILY_BUDGET=0.05;
 
-const COST_PER_CALL = {
-  "gemini-2.5-flash":0.0001,
-  "gemini-2.0-flash":0.000075,
-  "gemini-2.0-flash-lite":0.00004
-};
+let S={tab:0,meals:[],evals:[],loading:false,showEvalForm:false,newEval:{weight:"",fatPct:"",leanKg:"",cintura:"",abdome:"",quadril:""}};
 
-const DAILY_BUDGET = 0.05;
-
-let S = {
-  tab:0, meals:[], evals:[], loading:false,
-  showEvalForm:false,
-  newEval:{weight:"",fatPct:"",leanKg:"",cintura:"",abdome:"",quadril:""}
-};
-
-const LS = {
-  get:(k,fb=null)=>{ try{const v=localStorage.getItem(k);return v?JSON.parse(v):fb}catch{return fb} },
-  set:(k,v)=>{ try{localStorage.setItem(k,JSON.stringify(v))}catch{} },
-  del:(k)=>{ try{localStorage.removeItem(k)}catch{} }
+const LS={
+  get:(k,fb=null)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):fb}catch{return fb}},
+  set:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch{}},
+  del:(k)=>{try{localStorage.removeItem(k)}catch{}}
 };
 
 function loadData(){
-  S.meals = LS.get("ih-meals",[]);
-  S.evals = LS.get("ih-evals") || [{...BASELINE,id:1,label:"Evaluación #12 (base)"}];
+  S.meals=LS.get("ih-meals",[]);
+  S.evals=LS.get("ih-evals")||[{...BASELINE,id:1,label:"Avaliação #12 (base)"}];
 }
-
 function saveData(){
-  LS.set("ih-meals", S.meals.map(({imgData,...r})=>r));
-  LS.set("ih-evals", S.evals);
+  LS.set("ih-meals",S.meals.map(({imgData,...r})=>r));
+  LS.set("ih-evals",S.evals);
 }
-
 function getCosts(){
-  const today = new Date().toDateString();
-  const d = LS.get("ih-costs",{date:"",calls:0,usd:0});
-  return d.date===today ? d : {date:today,calls:0,usd:0};
+  const today=new Date().toDateString();
+  const d=LS.get("ih-costs",{date:"",calls:0,usd:0});
+  return d.date===today?d:{date:today,calls:0,usd:0};
 }
 function addCost(model){
-  const d = getCosts();
-  d.calls++;
-  d.usd = +(d.usd+(COST_PER_CALL[model]||0.000075)).toFixed(6);
-  LS.set("ih-costs",d);
-  return d;
+  const d=getCosts();d.calls++;
+  d.usd=+(d.usd+(COST_PER_CALL[model]||0.000075)).toFixed(6);
+  LS.set("ih-costs",d);return d;
 }
 function updateBadges(){
-  const d = getCosts();
-  const model = LS.get("ih-model","gemini-2.5-flash");
-  const cb = document.getElementById("cost-badge");
-  const mb = document.getElementById("model-badge");
-  if(cb) cb.textContent = `Hoy: $${d.usd.toFixed(4)} · ${d.calls} análisis`;
-  if(mb) mb.textContent = model;
+  const d=getCosts();
+  const cb=document.getElementById("cost-badge");
+  if(cb)cb.textContent=`Hoy: $${d.usd.toFixed(4)} · ${d.calls} análises`;
 }
-
 function getCfg(){
-  return {
-    mode:  LS.get("ih-mode",null),
-    key:   LS.get("ih-key",null),
-    proxy: LS.get("ih-proxy",null),
-    model: LS.get("ih-model","gemini-2.5-flash")
-  };
+  return{mode:LS.get("ih-mode",null),key:LS.get("ih-key",null),proxy:LS.get("ih-proxy",null),model:LS.get("ih-model","gemini-2.5-flash")};
 }
 function showScreen(id){
-  ["setup-screen","direct-screen","proxy-screen"].forEach(s=>
-    document.getElementById(s).classList.add("hidden"));
+  ["setup-screen","direct-screen","proxy-screen"].forEach(s=>document.getElementById(s).classList.add("hidden"));
   document.getElementById("app").style.display="none";
-  const el = document.getElementById(id);
-  if(el) el.classList.remove("hidden");
+  document.getElementById("navbar").style.display="none";
+  document.getElementById(id).classList.remove("hidden");
 }
 function saveDirectKey(){
-  const key = document.getElementById("directKeyInput").value.trim();
-  const model = document.getElementById("modelSelect").value;
-  if(!key||!key.startsWith("AIza")){ toast("⚠️ La key debe empezar con AIza...","err"); return; }
-  LS.set("ih-mode","direct"); LS.set("ih-key",key); LS.set("ih-model",model);
+  const key=document.getElementById("directKeyInput").value.trim();
+  const model=document.getElementById("modelSelect").value;
+  if(!key||!key.startsWith("AIza")){toast("A key deve começar com AIza...","err");return;}
+  LS.set("ih-mode","direct");LS.set("ih-key",key);LS.set("ih-model",model);
   startApp();
 }
 function saveProxyUrl(){
-  const url = document.getElementById("proxyUrlInput").value.trim();
-  if(!url.startsWith("https://")){ toast("⚠️ URL debe empezar con https://","err"); return; }
-  LS.set("ih-mode","proxy"); LS.set("ih-proxy",url);
+  const url=document.getElementById("proxyUrlInput").value.trim();
+  if(!url.startsWith("https://")){toast("URL deve começar com https://","err");return;}
+  LS.set("ih-mode","proxy");LS.set("ih-proxy",url);
   startApp();
 }
 function startApp(){
-  ["setup-screen","direct-screen","proxy-screen"].forEach(s=>
-    document.getElementById(s).classList.add("hidden"));
+  ["setup-screen","direct-screen","proxy-screen"].forEach(s=>document.getElementById(s).classList.add("hidden"));
   document.getElementById("app").style.display="block";
-  loadData(); updateBadges(); render();
-  toast("✅ Listo");
+  document.getElementById("navbar").style.display="flex";
+  loadData();updateBadges();render();
+  toast("Pronto");
 }
 
-// PROMPT — números primero en el JSON, texto descriptivo al final
-// CAUSA DEL BUG: "porciones" tenía texto largo ANTES de los números,
-// Gemini llenaba el texto y se quedaba sin tokens antes de escribir los macros.
-// SOLUCIÓN: números primero → aunque se trunque el texto, los macros ya están.
-const PROMPT = `Analiza el alimento/bebida. Usuario: 20 años, 77kg, objetivo bajar grasa.
-Responde SOLO con este JSON exacto (sin texto, sin markdown):
+const PROMPT=`Analisa o alimento/bebida. Usuário: 20 anos, 77kg, objetivo reduzir gordura.
+Responda APENAS com este JSON exato (sem texto, sem markdown):
 {"nombre":"","calorias":0,"proteina":0,"carbos":0,"grasa":0,"fibra":0,"score":0,"clasificacion":"","confianza":"","porciones":"","positivo":"","feedback":"","sugerencia":""}
-Reglas: calorias/proteina/carbos/grasa NUNCA son 0 (excepto agua). Estima siempre. score 1-10.`;
+Regras: calorias/proteina/carbos/grasa NUNCA são 0 (exceto água). Sempre estime. score 1-10.`;
 
-async function callGemini(b64, mime){
-  const cfg = getCfg();
-
-  const costs = getCosts();
-  if(costs.usd >= DAILY_BUDGET){
-    if(!confirm(`⚠️ Límite diario: $${costs.usd.toFixed(4)} USD.\n¿Continuar?`))
-      throw new Error("Cancelado por límite de presupuesto");
+async function callGemini(b64,mime){
+  const cfg=getCfg();
+  const costs=getCosts();
+  if(costs.usd>=DAILY_BUDGET){
+    if(!confirm(`Limite diário: $${costs.usd.toFixed(4)} USD.\nContinuar?`))throw new Error("Cancelado por limite");
   }
-
   if(cfg.mode==="proxy"){
-    const res = await fetch(cfg.proxy,{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({base64:b64,mimeType:mime,prompt:PROMPT})
-    });
-    if(!res.ok) throw new Error("Error del proxy: "+await res.text());
-    const data = await res.json();
+    const res=await fetch(cfg.proxy,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({base64:b64,mimeType:mime,prompt:PROMPT})});
+    if(!res.ok)throw new Error("Erro do proxy: "+await res.text());
+    const data=await res.json();
     return parseResponse(data.result||data.text||JSON.stringify(data));
   }
-
-  // ── FIX 2: URL corregida de /v1/ a /v1beta/ ──
-  // /v1/ no soporta modelos Gemini con imágenes.
-  // /v1beta/ es la versión correcta para generateContent con multimodal.
-    const selectedModel = cfg.model || "gemini-2.5-flash";
-  // Nombres exactos verificados contra la API de esta cuenta
-  const FALLBACK_MODELS = [
-    selectedModel,
-    "gemini-2.5-flash",
-    "gemini-2.0-flash",
-    "gemini-2.0-flash-001",
-    "gemini-2.0-flash-lite"
-  ];
-  const modelsToTry = [...new Set(FALLBACK_MODELS)];
-
+  const selectedModel=cfg.model||"gemini-2.5-flash";
+  const FALLBACK_MODELS=[selectedModel,"gemini-2.5-flash","gemini-2.0-flash","gemini-2.0-flash-001","gemini-2.0-flash-lite"];
+  const modelsToTry=[...new Set(FALLBACK_MODELS)];
   let lastError;
   for(const m of modelsToTry){
-    // ✅ CORRECCIÓN CLAVE: /v1beta/ en lugar de /v1/
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${cfg.key}`;
-    const res = await fetch(url,{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({
-        contents:[{parts:[
-          {text:PROMPT},
-          {inline_data:{mime_type:mime,data:b64}}
-        ]}],
-        // texto antes que imagen — Gemini interpreta mejor la instrucción
-        // maxOutputTokens 1500 — el JSON necesita ~400-600 tokens, 800 era insuficiente
-        // responseMimeType fuerza JSON puro desde la API, sin texto extra
-        generationConfig:{
-          temperature:0.1,
-          maxOutputTokens:1500,
-          responseMimeType:"application/json"
-        }
-      })
-    });
-
+    const url=`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${cfg.key}`;
+    const res=await fetch(url,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({
+      contents:[{parts:[{text:PROMPT},{inline_data:{mime_type:mime,data:b64}}]}],
+      generationConfig:{temperature:0.1,maxOutputTokens:1500,responseMimeType:"application/json"}
+    })});
     if(res.ok){
-      if(m !== selectedModel){ LS.set("ih-model", m); toast(`ℹ️ Usando ${m}`); }
-      addCost(m); updateBadges();
-      const data = await res.json();
-      const parts = data.candidates?.[0]?.content?.parts || [];
-      const raw = parts.map(p => p.text || "").join("");
-      const parsed = parseResponse(raw);
-      // Si macros siguen en 0 después del parser, loguear para debug pero no bloquear
-      // El usuario puede ver el resultado con confianza "baja" y reintentar si quiere
-      if(parsed.calorias===0 && parsed.proteina===0 && !parsed.nombre.toLowerCase().includes("agua")){
-        console.warn("⚠️ Macros en 0 después del parser. Raw truncado:", raw.slice(0,200));
+      if(m!==selectedModel){LS.set("ih-model",m);toast(`Usando ${m}`);}
+      addCost(m);updateBadges();
+      const data=await res.json();
+      const parts=data.candidates?.[0]?.content?.parts||[];
+      const raw=parts.map(p=>p.text||"").join("");
+      const parsed=parseResponse(raw);
+      if(parsed.calorias===0&&parsed.proteina===0&&!parsed.nombre.toLowerCase().includes("agua")){
+        console.warn("⚠️ Macros en 0 después del parser. Raw truncado:",raw.slice(0,200));
       }
       return parsed;
     }
-
-    const errData = await res.json().catch(()=>({}));
-    lastError = errData.error?.message || "Error desconocido";
-    if(!lastError.includes("not found") && !lastError.includes("no longer") && !lastError.includes("not supported")){
-      break;
-    }
+    const errData=await res.json().catch(()=>({}));
+    lastError=errData.error?.message||"Error desconocido";
+    if(!lastError.includes("not found")&&!lastError.includes("no longer")&&!lastError.includes("not supported"))break;
     console.warn(`Modelo ${m} no disponible, probando siguiente...`);
   }
-
-  const msg = lastError || "Error";
-  if(msg.includes("quota"))             throw new Error("Cuota agotada. Verifica tu plan en Google Cloud.");
-  if(msg.includes("API_KEY"))           throw new Error("API key inválida. Verifica en ai.google.dev");
-  if(msg.includes("PERMISSION_DENIED")) throw new Error("Sin permisos. Activa billing en Google Cloud.");
-  if(msg.includes("not found")||msg.includes("not supported")) throw new Error("Modelo no disponible. Cambia el modelo en ⚙️ Config.");
+  const msg=lastError||"Error";
+  if(msg.includes("quota"))throw new Error("Cota esgotada. Verifique o Google Cloud.");
+  if(msg.includes("API_KEY"))throw new Error("API key inválida.");
+  if(msg.includes("PERMISSION_DENIED"))throw new Error("Sem permissões. Ative o billing no Google Cloud.");
+  if(msg.includes("not found")||msg.includes("not supported"))throw new Error("Modelo não disponível. Altere em ⚙️ Config.");
   throw new Error(msg);
 }
 
 function parseResponse(raw){
-  if(!raw) throw new Error("Respuesta vacía de la IA");
-
-  // Helper: extrae número de un campo aunque el JSON esté incompleto
-  const num = (k) => {
-    const m = raw.match(new RegExp('"' + k + '"\s*:\s*([\d.]+)'));
-    return m ? parseFloat(m[1]) : 0;
-  };
-  // Helper: extrae string de un campo aunque el JSON esté incompleto
-  const str = (k) => {
-    const m = raw.match(new RegExp('"' + k + '"\s*:\s*"([^"]*)"'));
-    return m ? m[1] : null;
-  };
-
-  // Intento 1: parseo directo (JSON completo y válido)
-  try{ return validate(JSON.parse(raw.replace(/```json|```/g,"").trim())); }catch{}
-
-  // Intento 2: extraer bloque {} completo con regex
-  try{ const m=raw.match(/\{[\s\S]*\}/); if(m) return validate(JSON.parse(m[0])); }catch{}
-
-  // Intento 3: JSON truncado — si los números clave ya llegaron, usarlos directo
-  // Este es el caso exacto del bug: calorias/proteina/carbos/grasa están en el raw
-  // pero el JSON falla porque se cortó después de grasa o fibra
-  const cal = num("calorias");
-  const prot = num("proteina");
-  const carb = num("carbos");
-  const fat = num("grasa");
-  if(cal > 0 || prot > 0 || carb > 0 || fat > 0){
-    // Tenemos los números importantes — construir objeto con lo que hay
-    return validate({
-      nombre:        str("nombre") || "Alimento",
-      porciones:     str("porciones") || "1 porción",
-      calorias:      cal,
-      proteina:      prot,
-      carbos:        carb,
-      grasa:         fat,
-      fibra:         num("fibra"),
-      score:         num("score") || 5,
-      clasificacion: str("clasificacion") || "Regular",
-      positivo:      str("positivo") || "",
-      feedback:      str("feedback") || "",
-      sugerencia:    str("sugerencia") || "",
-      confianza:     str("confianza") || "media"
-    });
+  if(!raw)throw new Error("Resposta vazia");
+  const num=(k)=>{const m=raw.match(new RegExp('"'+k+'"\\s*:\\s*([\\d.]+)'));return m?parseFloat(m[1]):0;};
+  const str=(k)=>{const m=raw.match(new RegExp('"'+k+'"\\s*:\\s*"([^"]*)"'));return m?m[1]:null;};
+  try{return validate(JSON.parse(raw.replace(/```json|```/g,"").trim()));}catch{}
+  try{const m=raw.match(/\{[\s\S]*\}/);if(m)return validate(JSON.parse(m[0]));}catch{}
+  const cal=num("calorias"),prot=num("proteina"),carb=num("carbos"),fat=num("grasa");
+  if(cal>0||prot>0||carb>0||fat>0){
+    return validate({nombre:str("nombre")||"Alimento",porciones:str("porciones")||"1 porción",calorias:cal,proteina:prot,carbos:carb,grasa:fat,fibra:num("fibra"),score:num("score")||5,clasificacion:str("clasificacion")||"Regular",positivo:str("positivo")||"",feedback:str("feedback")||"",sugerencia:str("sugerencia")||"",confianza:str("confianza")||"media"});
   }
-
-  // Intento 4: intentar cerrar el JSON truncado y parsear
-  try{
-    let fixed = raw.replace(/```json|```/g,"").trim();
-    const openStr = (fixed.match(/"/g)||[]).length % 2 !== 0;
-    if(openStr) fixed += '"';
-    if(!fixed.trimEnd().endsWith("}")) fixed += "}";
-    return validate(JSON.parse(fixed));
-  }catch{}
-
-  // Intento 5: último recurso — todo lo que podamos extraer
-  return validate({
-    nombre:     str("nombre") || "Alimento no identificado",
-    porciones:  str("porciones") || "1 porción",
-    calorias:   cal, proteina: prot, carbos: carb, grasa: fat,
-    fibra:      num("fibra"), score: num("score") || 5,
-    clasificacion: str("clasificacion") || "Regular",
-    positivo:   str("positivo") || "",
-    feedback:   str("feedback") || "Respuesta incompleta de la IA.",
-    sugerencia: str("sugerencia") || "",
-    confianza:  "baja"
-  });
+  try{let f=raw.replace(/```json|```/g,"").trim();if((f.match(/"/g)||[]).length%2!==0)f+='"';if(!f.trimEnd().endsWith("}"))f+="}";return validate(JSON.parse(f));}catch{}
+  return validate({nombre:str("nombre")||"Alimento no identificado",porciones:str("porciones")||"1 porción",calorias:cal,proteina:prot,carbos:carb,grasa:fat,fibra:num("fibra"),score:num("score")||5,clasificacion:str("clasificacion")||"Regular",positivo:str("positivo")||"",feedback:str("feedback")||"Análise incompleta.",sugerencia:str("sugerencia")||"Tente novamente.",confianza:"baja"});
 }
 
 function validate(d){
-  return {
-    nombre:      String(d.nombre||"Alimento"),
-    porciones:   String(d.porciones||"1 porción"),
-    calorias:    Math.round(Math.abs(d.calorias||0)),
-    proteina:    Math.round(Math.abs(d.proteina||0)),
-    carbos:      Math.round(Math.abs(d.carbos||0)),
-    grasa:       Math.round(Math.abs(d.grasa||0)),
-    fibra:       Math.round(Math.abs(d.fibra||0)),
-    score:       Math.min(10,Math.max(1,Math.round(d.score||5))),
-    clasificacion:String(d.clasificacion||"Regular"),
-    positivo:    String(d.positivo||""),
-    feedback:    String(d.feedback||""),
-    sugerencia:  String(d.sugerencia||""),
-    confianza:   String(d.confianza||"media")
-  };
+  return{nombre:String(d.nombre||"Alimento"),porciones:String(d.porciones||"1 porción"),calorias:Math.round(Math.abs(d.calorias||0)),proteina:Math.round(Math.abs(d.proteina||0)),carbos:Math.round(Math.abs(d.carbos||0)),grasa:Math.round(Math.abs(d.grasa||0)),fibra:Math.round(Math.abs(d.fibra||0)),score:Math.min(10,Math.max(1,Math.round(d.score||5))),clasificacion:String(d.clasificacion||"Regular"),positivo:String(d.positivo||""),feedback:String(d.feedback||""),sugerencia:String(d.sugerencia||""),confianza:String(d.confianza||"media")};
 }
 
 function compress(file,maxW=800,q=0.78){
   return new Promise(res=>{
-    const img=new Image(), url=URL.createObjectURL(file);
+    const img=new Image(),url=URL.createObjectURL(file);
     img.onload=()=>{
       const r=Math.min(maxW/img.width,maxW/img.height,1);
       const c=document.createElement("canvas");
-      c.width=img.width*r; c.height=img.height*r;
+      c.width=img.width*r;c.height=img.height*r;
       c.getContext("2d").drawImage(img,0,0,c.width,c.height);
       URL.revokeObjectURL(url);
       const dataUrl=c.toDataURL("image/jpeg",q);
@@ -418,258 +394,227 @@ function compress(file,maxW=800,q=0.78){
 }
 
 async function handlePhoto(e){
-  const file=e.target.files[0]; if(!file) return;
+  const file=e.target.files[0];if(!file)return;
   const cfg=getCfg();
-  if(!cfg.mode){ toast("⚠️ Configura la API primero","err"); return; }
-  S.loading=true; renderTab();
+  if(!cfg.mode){toast("Configure a API primeiro","err");return;}
+  S.loading=true;renderTab();
   try{
-    toast("📸 Comprimiendo...");
+    toast("Comprimindo imagem...");
     const img=await compress(file);
-    toast("🧠 Gemini analizando...");
+    toast("Gemini analisando...");
     const result=await callGemini(img.b64,img.mime);
-    S.meals.unshift({
-      ...result,imgData:img.dataUrl,
-      time:new Date().toLocaleTimeString("es",{hour:"2-digit",minute:"2-digit"}),
-      date:new Date().toLocaleDateString("es"),
-      id:Date.now()
-    });
+    S.meals.unshift({...result,imgData:img.dataUrl,time:new Date().toLocaleTimeString("es",{hour:"2-digit",minute:"2-digit"}),date:new Date().toLocaleDateString("es"),id:Date.now()});
     saveData();
-    toast(`✅ ${result.nombre} — ${result.score}/10`);
-  }catch(err){
-    toast("❌ "+err.message,"err");
-  }
-  S.loading=false; renderTab(); e.target.value="";
+    toast(`${result.nombre} — ${result.score}/10`);
+  }catch(err){toast(err.message,"err");}
+  S.loading=false;renderTab();e.target.value="";
 }
 
-function switchTab(i,btn){
+// ── SCORES y colores ──────────────────────────────────────
+const scoreColor=s=>s>=8?"#d4e8c4":s>=5?"#f5ead4":"#f5d4d4";
+const scoreTextColor=s=>s>=8?"#3a5a2a":s>=5?"#7a5a2a":"#7a2a2a";
+const confColor=c=>c==="alta"?"#4a7a3a":c==="media"?"#8a7a3a":"#8a4a3a";
+const barColors=["#c4a882","#8a9a7a","#a8b898","#c4b89a","#a8c8a0"];
+
+// ── RENDER ────────────────────────────────────────────────
+function switchTab(i){
   S.tab=i;
-  document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active"));
-  btn.classList.add("active"); renderTab();
+  [0,1,2,3].forEach(j=>{
+    const ic=document.getElementById("ni"+j);
+    const lb=document.getElementById("nl"+j);
+    if(ic){ic.classList.toggle("active",j===i);}
+    if(lb){lb.classList.toggle("active",j===i);}
+  });
+  renderTab();
+  window.scrollTo({top:0,behavior:"smooth"});
 }
-function render(){ renderTab(); }
+function render(){renderTab();}
 function renderTab(){
-  const el=document.getElementById("tab-content"); if(!el) return;
+  const el=document.getElementById("tab-content");if(!el)return;
   const latest=S.evals[S.evals.length-1];
   const today=new Date().toLocaleDateString("es");
   const tm=S.meals.filter(m=>m.date===today);
-  const mac=tm.reduce((a,m)=>({
-    cal:a.cal+(m.calorias||0),prot:a.prot+(m.proteina||0),
-    carb:a.carb+(m.carbos||0),fat:a.fat+(m.grasa||0),fib:a.fib+(m.fibra||0)
-  }),{cal:0,prot:0,carb:0,fat:0,fib:0});
-  if(S.tab===0) el.innerHTML=tabResumen(latest,mac,tm.length);
-  if(S.tab===1) el.innerHTML=tabComidas();
-  if(S.tab===2) el.innerHTML=tabProgreso(latest);
-  if(S.tab===3) el.innerHTML=tabEvals();
-}
-
-const sc=s=>s>=8?"#4ade80":s>=5?"#facc15":"#f87171";
-const cc=c=>c==="alta"?"#4ade80":c==="media"?"#facc15":"#f87171";
-
-function mcard(label,val,unit,sub,color){
-  return `<div class="card" style="display:flex;flex-direction:column;gap:4px">
-    <span style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:1px">${label}</span>
-    <span style="font-size:26px;font-weight:700;color:${color||"#fff"};font-family:'DM Mono',monospace">${val}<span style="font-size:13px;color:#aaa;margin-left:3px">${unit}</span></span>
-    ${sub?`<span style="font-size:12px;color:#666">${sub}</span>`:""}
-  </div>`;
+  const mac=tm.reduce((a,m)=>({cal:a.cal+(m.calorias||0),prot:a.prot+(m.proteina||0),carb:a.carb+(m.carbos||0),fat:a.fat+(m.grasa||0),fib:a.fib+(m.fibra||0)}),{cal:0,prot:0,carb:0,fat:0,fib:0});
+  if(S.tab===0)el.innerHTML=tabResumo(latest,mac,tm.length);
+  if(S.tab===1)el.innerHTML=tabRefeições();
+  if(S.tab===2)el.innerHTML=tabProgresso(latest);
+  if(S.tab===3)el.innerHTML=tabEvals();
 }
 
 function pbar(label,val,max,color,unit,goal=""){
   const pct=Math.min((val/max)*100,100);
-  return `<div style="margin-bottom:14px">
-    <div style="display:flex;justify-content:space-between;margin-bottom:5px">
-      <span style="font-size:13px;color:#ccc">${label}${goal?` <span style="font-size:11px;color:#444">${goal}</span>`:""}</span>
-      <span style="font-size:13px;color:${color};font-family:'DM Mono',monospace">${val}${unit}</span>
-    </div>
-    <div style="background:rgba(255,255,255,.07);border-radius:99px;height:8px;overflow:hidden">
-      <div style="width:${pct}%;background:${color};border-radius:99px;height:100%;transition:width .6s ease"></div>
+  return`<div class="bar-row">
+    <div class="bar-header"><span class="bar-name">${label}${goal?` <span style="font-size:10px;color:#c0b8b0">${goal}</span>`:""}</span><span class="bar-val">${val}${unit}</span></div>
+    <div class="bar-bg"><div class="bar-fill" style="width:${pct}%;background:${color}"></div></div>
+  </div>`;
+}
+
+function tabResumo(latest,mac,count){
+  const wd=S.evals.length>1?(latest.weight-BASELINE.weight).toFixed(1):null;
+  return`
+  <div class="metric-grid">
+    ${[["Peso",latest.weight,"kg",wd?`${wd>0?"+":""}${wd} kg`:"Base inicial"],["Gordura",latest.fatPct,"%",`${latest.fatKg} kg`],["Massa magra",latest.leanKg,"kg",`${latest.leanPct}%`],["IMC",latest.imc||BASELINE.imc,"","Sobrepeso leve"]].map(([l,v,u,s])=>`
+    <div class="metric-card">
+      <div class="metric-label">${l}</div>
+      <div class="metric-value">${v}<span class="metric-unit">${u}</span></div>
+      <div class="metric-sub">${s}</div>
+    </div>`).join("")}
+  </div>
+  <div class="macro-card">
+    <div class="section-title">Macros de hoje · ${count} refeição${count!==1?"s":""}</div>
+    ${count===0?'<div style="font-size:13px;color:#c0b8b0;text-align:center;padding:12px 0">Ainda sem refeições registradas hoje<br/><span style="font-size:11px">Ve a Refeições y saca una foto</span></div>':
+      pbar("Calorias",mac.cal,2000,barColors[0]," kcal","/ 2000")+
+      pbar("Proteína",mac.prot,130,barColors[1],"g","/ 130g")+
+      pbar("Carboidratos",mac.carb,200,barColors[2],"g","")+
+      pbar("Gordura",mac.fat,65,barColors[3],"g","")+
+      pbar("Fibra",mac.fib,25,barColors[4],"g","/ 25g")}
+  </div>
+  <div class="goal-card">
+    <div class="goal-title">objetivo ativo</div>
+    <div class="goal-text">Bajar grasa <strong>21.8% → 17%</strong> manteniendo masa magra. Proteína en cada refeição. 2L agua/día.</div>
+    <div class="tag-row">
+      ${["🏋️ Ter/Qui/Sex","📚 Qua/Sáb","🏫 Seg escola"].map(t=>`<div class="tag">${t}</div>`).join("")}
     </div>
   </div>`;
 }
 
-function tabResumen(latest,mac,count){
-  const wd=S.evals.length>1?(latest.weight-BASELINE.weight).toFixed(1):null;
-  return `
-    <div class="grid2" style="margin-bottom:16px">
-      ${mcard("Peso",latest.weight,"kg",wd?`${wd>0?"+":""}${wd} kg vs inicio`:"-",wd<0?"#4ade80":wd>0?"#f87171":"#fff")}
-      ${mcard("Grasa",latest.fatPct,"%",`${latest.fatKg} kg`,latest.fatPct>21?"#facc15":"#4ade80")}
-      ${mcard("Masa magra",latest.leanKg,"kg",`${latest.leanPct}%`,"#63b3ed")}
-      ${mcard("IMC",latest.imc||BASELINE.imc,"","Sobrepeso leve","#facc15")}
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div style="display:flex;justify-content:space-between;margin-bottom:14px">
-        <div style="font-size:12px;color:#888;text-transform:uppercase;letter-spacing:1px">Macros de hoy</div>
-        <div style="font-size:12px;color:#444">${count} comida${count!==1?"s":""}</div>
-      </div>
-      ${count===0
-        ?'<div style="color:#333;font-size:13px;text-align:center;padding:14px 0">Sin comidas registradas hoy<br/><span style="font-size:12px">Ve a 🍽️ y saca una foto</span></div>'
-        : pbar("Calorías",mac.cal,2000,"#f59e0b"," kcal","/ 2000")
-        + pbar("Proteína",mac.prot,130,"#63b3ed","g","/ 130g")
-        + pbar("Carbohidratos",mac.carb,200,"#a78bfa","g","")
-        + pbar("Grasa",mac.fat,65,"#f87171","g","")
-        + pbar("Fibra",mac.fib,25,"#34d399","g","/ 25g")}
-    </div>
-    <div style="background:linear-gradient(135deg,rgba(99,179,237,.08),rgba(99,179,237,.02));border:1px solid rgba(99,179,237,.18);border-radius:16px;padding:16px">
-      <div style="font-size:11px;color:#63b3ed;letter-spacing:2px;margin-bottom:8px">🎯 OBJETIVO</div>
-      <div style="font-size:13px;color:#bbb;line-height:1.6">Bajar grasa <strong style="color:#fff">21.8% → 17%</strong> manteniendo masa magra.<br/>Proteína en cada comida. 2L agua/día.</div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
-        ${["🏋️ Mar/Jue/Vie","📚 Mié/Sáb","🏫 Lun escuela"].map(t=>`<span style="font-size:11px;background:rgba(255,255,255,.05);border-radius:99px;padding:4px 10px;color:#666">${t}</span>`).join("")}
-      </div>
-    </div>`;
-}
-
-function tabComidas(){
+function tabRefeições(){
   const cards=S.meals.map(m=>`
-    <div class="meal-card" style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:16px;overflow:hidden;margin-bottom:12px">
-      <div style="display:flex">
-        ${m.imgData?`<img src="${m.imgData}" style="width:92px;height:92px;object-fit:cover;flex-shrink:0"/>`
-          :`<div style="width:92px;height:92px;background:#111;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">🍽️</div>`}
-        <div style="padding:10px 12px;flex:1;min-width:0">
-          <div style="display:flex;justify-content:space-between;gap:6px;align-items:flex-start">
-            <div style="font-size:14px;font-weight:600;line-height:1.3">${m.nombre}</div>
-            <div style="background:${sc(m.score)};border-radius:99px;min-width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#000;flex-shrink:0">${m.score}</div>
-          </div>
-          <div style="font-size:11px;color:#444;margin-top:2px">${m.time} · ${m.date}</div>
-          <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">
-            <span style="font-size:11px;color:#888">🔥<b style="color:#fff">${m.calorias}</b>kcal</span>
-            <span style="font-size:11px;color:#888">💪<b style="color:#63b3ed">${m.proteina}</b>g</span>
-            <span style="font-size:11px;color:#888">🌾<b style="color:#a78bfa">${m.carbos}</b>g</span>
-            <span style="font-size:11px;color:#888">🥑<b style="color:#f87171">${m.grasa}</b>g</span>
-          </div>
+  <div class="meal-card">
+    <div class="meal-top">
+      ${m.imgData?`<img class="meal-img" src="${m.imgData}" alt="${m.nombre}"/>`:`<div class="meal-img-placeholder">🍽️</div>`}
+      <div class="meal-info">
+        <div class="meal-name">${m.nombre}</div>
+        <div class="meal-time">${m.time} · ${m.date}</div>
+        <div class="meal-macros">
+          <div class="macro-chip">🔥 ${m.calorias} kcal</div>
+          <div class="macro-chip">💪 ${m.proteina}g</div>
+          <div class="macro-chip">🌾 ${m.carbos}g</div>
+          <div class="macro-chip">🥑 ${m.grasa}g</div>
         </div>
       </div>
-      <div style="padding:10px 12px;border-top:1px solid rgba(255,255,255,.05)">
-        ${m.positivo?`<div style="font-size:12px;color:#4ade80;margin-bottom:5px">✅ ${m.positivo}</div>`:""}
-        <div style="font-size:12px;color:#bbb;line-height:1.5;margin-bottom:6px">${m.feedback}</div>
-        <div style="font-size:12px;color:#63b3ed;background:rgba(99,179,237,.08);border-radius:8px;padding:6px 10px;margin-bottom:5px">💡 ${m.sugerencia}</div>
-        <div style="font-size:10px;color:#444">${m.clasificacion||""} · Confianza: <span style="color:${cc(m.confianza)}">${m.confianza||"media"}</span></div>
-      </div>
-    </div>`).join("");
-
-  return `
-    <button onclick="document.getElementById('photoInput').click()"
-      style="background:linear-gradient(135deg,#63b3ed,#4299e1);border:none;border-radius:16px;padding:18px;color:#fff;font-size:15px;font-weight:700;width:100%;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 4px 20px rgba(99,179,237,.25);margin-bottom:16px">
-      📸 Analizar comida con Gemini
-    </button>
-    ${S.loading?`<div style="text-align:center;padding:32px 0"><div class="pulse" style="font-size:36px;margin-bottom:10px">🧠</div><div style="color:#63b3ed;font-size:14px;font-weight:600">Analizando...</div></div>`:""}
-    ${cards}
-    ${S.meals.length===0&&!S.loading?`<div style="text-align:center;padding:48px 0;color:#333"><div style="font-size:44px;margin-bottom:12px">🍽️</div><div style="font-size:14px;color:#444">Saca una foto de tu próxima comida</div><div style="font-size:12px;color:#333;margin-top:6px">La IA calcula macros y te da feedback</div></div>`:""}`;
+      <div class="score-badge" style="background:${scoreColor(m.score)};color:${scoreTextColor(m.score)}">${m.score}</div>
+    </div>
+    <div class="meal-bottom">
+      ${m.positivo?`<div class="meal-positive">✓ ${m.positivo}</div>`:""}
+      ${m.feedback?`<div class="meal-feedback">${m.feedback}</div>`:""}
+      ${m.sugerencia?`<div class="meal-tip">${m.sugerencia}</div>`:""}
+      <div class="meal-conf">${m.clasificacion||""} · Confiança: <span style="color:${confColor(m.confianza)}">${m.confianza||"media"}</span></div>
+    </div>
+  </div>`).join("");
+  return`
+  <button class="btn-analyze" onclick="document.getElementById('photoInput').click()">
+    Analisar refeição com Gemini
+  </button>
+  ${S.loading?`<div class="loading-box"><div class="pulse" style="font-size:36px;margin-bottom:10px">🌿</div><div style="font-size:13px;color:#8a9a7a;font-weight:500">Gemini analisando...</div></div>`:""}
+  ${cards}
+  ${S.meals.length===0&&!S.loading?`<div class="empty-box"><div class="empty-icon">🍃</div><div class="empty-title">Sem refeições registradas ainda</div><div class="empty-sub">A IA calcula macros e te dá feedback</div></div>`:""}`;
 }
 
-function tabProgreso(latest){
+function tabProgresso(latest){
   const barchart=(data,vFn,cFn,lFn,ex=2)=>{
-    if(!data.length) return '<div style="color:#333;font-size:13px;text-align:center;padding:16px">Sin datos</div>';
+    if(!data.length)return'<div style="color:#c0b8b0;font-size:13px;text-align:center;padding:16px">Sem dados ainda</div>';
     const vals=data.map(vFn),minV=Math.min(...vals)-ex,maxV=Math.max(...vals)+ex,range=maxV-minV||1;
-    return `<div style="display:flex;align-items:flex-end;gap:6px;height:88px">${
-      data.map((e,i)=>{
-        const h=((vFn(e)-minV)/range)*70+10,col=cFn(e,i,data);
-        return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px">
-          <div style="font-size:9px;color:${col};font-family:'DM Mono',monospace;text-align:center">${lFn(e)}</div>
-          <div style="width:100%;height:${h}px;background:${col};border-radius:4px 4px 0 0;opacity:${i===data.length-1?1:0.3}"></div>
-          <div style="font-size:8px;color:#333;text-align:center">${(e.date||"").slice(0,5)}</div>
-        </div>`;
-      }).join("")}</div>`;
+    return`<div class="bars-container">${data.map((e,i)=>{
+      const h=((vFn(e)-minV)/range)*68+10;
+      const col=cFn(e,i,data);
+      return`<div class="bar-col">
+        <div class="bar-col-val">${lFn(e)}</div>
+        <div class="bar-col-bar" style="height:${h}px;background:${col};opacity:${i===data.length-1?1:0.4}"></div>
+        <div class="bar-col-date">${(e.date||"").slice(0,5)}</div>
+      </div>`;
+    }).join("")}</div>`;
   };
-  return `
-    <div class="card" style="margin-bottom:14px">
-      <div style="font-size:12px;color:#666;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">Peso (kg)</div>
-      ${barchart(S.evals,e=>e.weight,(e,i,a)=>i===a.length-1?"#63b3ed":"rgba(99,179,237,.3)",e=>e.weight)}
-    </div>
-    <div class="card" style="margin-bottom:14px">
-      <div style="font-size:12px;color:#666;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">% Grasa</div>
-      ${barchart(S.evals,e=>e.fatPct,(e)=>e.fatPct>24?"#f87171":e.fatPct>21?"#facc15":"#4ade80",e=>e.fatPct+"%",1)}
-    </div>
-    <div class="card" style="margin-bottom:14px">
-      <div style="font-size:12px;color:#666;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">Masa magra (kg)</div>
-      ${barchart(S.evals,e=>e.leanKg,(e,i,a)=>i===a.length-1?"#4ade80":"rgba(74,222,128,.3)",e=>e.leanKg)}
-    </div>
-    <div class="card" style="margin-bottom:14px">
-      <div style="font-size:12px;color:#666;text-transform:uppercase;letter-spacing:1px;margin-bottom:14px">Medidas base (cm)</div>
-      ${Object.entries(BASELINE.measurements).map(([k,v])=>`
-        <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.04)">
-          <span style="font-size:13px;color:#888;text-transform:capitalize">${k}</span>
-          <span style="font-size:13px;font-family:'DM Mono',monospace">${v} cm</span>
-        </div>`).join("")}
-    </div>
-    <div class="card">
-      <div style="font-size:12px;color:#666;text-transform:uppercase;letter-spacing:1px;margin-bottom:14px">🎯 Metas</div>
-      ${pbar("Grasa → 17%",latest.fatPct,21.8,"#facc15","%","")}
-      ${pbar("Peso → 73 kg",latest.weight,77.2,"#63b3ed"," kg","")}
-      ${pbar("Magra → 62 kg",latest.leanKg,62,"#4ade80"," kg","")}
-    </div>`;
+  return`
+  <div class="chart-card">
+    <div class="section-title">Evolução do peso (kg)</div>
+    ${barchart(S.evals,e=>e.weight,(e,i,a)=>i===a.length-1?"#8a9a7a":"#c4d4b4",e=>e.weight)}
+  </div>
+  <div class="chart-card">
+    <div class="section-title">% Gordura corporal</div>
+    ${barchart(S.evals,e=>e.fatPct,(e)=>e.fatPct>24?"#c4a882":e.fatPct>21?"#c4b89a":"#a8c8a0",e=>e.fatPct+"%",1)}
+  </div>
+  <div class="chart-card">
+    <div class="section-title">Massa magra (kg)</div>
+    ${barchart(S.evals,e=>e.leanKg,(e,i,a)=>i===a.length-1?"#a8c8a0":"#c8e0c4",e=>e.leanKg)}
+  </div>
+  <div class="macro-card">
+    <div class="section-title">Medidas base (cm)</div>
+    ${Object.entries(BASELINE.measurements).map(([k,v])=>`
+    <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f5f2ed">
+      <span style="font-size:13px;color:#8a8078;text-transform:capitalize">${k}</span>
+      <span style="font-size:13px;color:#2d3526;font-weight:500">${v} cm</span>
+    </div>`).join("")}
+  </div>
+  <div class="macro-card">
+    <div class="section-title">🌿 Metas</div>
+    ${pbar("Gordura → 17%",latest.fatPct,21.8,barColors[0],"%","")}
+    ${pbar("Peso → 73 kg",latest.weight,77.2,barColors[1]," kg","")}
+    ${pbar("Magra → 62 kg",latest.leanKg,62,barColors[4]," kg","")}
+  </div>`;
 }
 
 function tabEvals(){
   const cards=S.evals.map((e,i)=>{
     const last=i===S.evals.length-1;
-    return `<div style="background:${last?"rgba(99,179,237,.06)":"rgba(255,255,255,.03)"};border:1px solid ${last?"rgba(99,179,237,.2)":"rgba(255,255,255,.07)"};border-radius:16px;padding:16px;margin-bottom:10px">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px">
-        <div><div style="font-weight:600;font-size:14px">${e.label}</div><div style="font-size:11px;color:#444">${e.date||""}</div></div>
-        ${last?'<span style="font-size:10px;background:rgba(99,179,237,.12);color:#63b3ed;border-radius:99px;padding:2px 8px">Más reciente</span>':""}
+    return`<div class="eval-card${last?" latest":""}">
+      <div class="eval-header">
+        <div><div class="eval-title">${e.label}</div><div class="eval-date">${e.date||""}</div></div>
+        ${last?'<div class="eval-badge">Mais recente</div>':""}
       </div>
-      <div class="grid3">
-        ${[["Peso",e.weight,"kg","#fff"],["Grasa",e.fatPct,"%","#facc15"],["Magra",e.leanKg,"kg","#63b3ed"]].map(([l,v,u,c])=>`
-          <div style="text-align:center;background:rgba(0,0,0,.18);border-radius:10px;padding:10px 4px">
-            <div style="font-size:17px;font-weight:700;font-family:'DM Mono',monospace;color:${c}">${v}<span style="font-size:10px;color:#555">${u}</span></div>
-            <div style="font-size:10px;color:#444">${l}</div>
-          </div>`).join("")}
+      <div class="eval-grid">
+        ${[["Peso",e.weight,"kg"],["Gordura",e.fatPct,"%"],["Magra",e.leanKg,"kg"]].map(([l,v,u])=>`
+        <div class="eval-metric">
+          <div class="eval-metric-val">${v}<span class="eval-metric-unit">${u}</span></div>
+          <div class="eval-metric-label">${l}</div>
+        </div>`).join("")}
       </div>
     </div>`;
   }).join("");
 
   const form=S.showEvalForm?`
-    <div class="card">
-      <div style="font-weight:600;margin-bottom:14px">➕ Nueva evaluación</div>
-      ${[["weight","Peso (kg)"],["fatPct","% Grasa"],["leanKg","Masa magra (kg)"],["cintura","Cintura (cm)"],["abdome","Abdomen (cm)"],["quadril","Cadera (cm)"]].map(([k,l])=>`
-        <div style="margin-bottom:10px">
-          <div style="font-size:12px;color:#666;margin-bottom:5px">${l}</div>
-          <input class="eval-input" type="number" step="0.1" placeholder="${l}" value="${S.newEval[k]}" oninput="S.newEval['${k}']=this.value"/>
-        </div>`).join("")}
-      <div style="display:flex;gap:10px;margin-top:8px">
-        <button onclick="addEval()" style="flex:1;background:#63b3ed;border:none;border-radius:12px;padding:13px;color:#000;font-weight:700">Guardar</button>
-        <button onclick="S.showEvalForm=false;renderTab()" style="flex:1;background:rgba(255,255,255,.06);border:none;border-radius:12px;padding:13px;color:#777">Cancelar</button>
-      </div>
-    </div>`
-  :`<button onclick="S.showEvalForm=true;renderTab()" style="background:rgba(99,179,237,.07);border:1px dashed rgba(99,179,237,.2);border-radius:16px;padding:18px;color:#63b3ed;font-size:14px;font-weight:600;width:100%">+ Registrar nueva evaluación</button>`;
+  <div class="eval-card">
+    <div style="font-weight:500;font-size:14px;color:#2d3526;margin-bottom:16px">Nova avaliação</div>
+    ${[["weight","Peso (kg)"],["fatPct","% Gordura"],["leanKg","Massa magra (kg)"],["cintura","Cintura (cm)"],["abdome","Abdômen (cm)"],["quadril","Quadril (cm)"]].map(([k,l])=>`
+    <div style="margin-bottom:10px">
+      <span class="input-label" style="display:block;margin-bottom:5px">${l}</span>
+      <input class="eval-input" type="number" step="0.1" placeholder="${l}" value="${S.newEval[k]}" oninput="S.newEval['${k}']=this.value"/>
+    </div>`).join("")}
+    <div style="display:flex;gap:10px;margin-top:12px">
+      <button onclick="addEval()" style="flex:1;background:#4a5e3a;border:none;border-radius:12px;padding:13px;color:#f5f2ed;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer">Salvar</button>
+      <button onclick="S.showEvalForm=false;renderTab()" style="flex:1;background:none;border:1px solid #ede9e2;border-radius:12px;padding:13px;color:#a09890;font-family:'DM Sans',sans-serif;cursor:pointer">Cancelar</button>
+    </div>
+  </div>`
+  :`<button class="btn-add-eval" onclick="S.showEvalForm=true;renderTab()">+ Registrar nova avaliação</button>`;
 
   return cards+form;
 }
 
 function addEval(){
   const w=parseFloat(S.newEval.weight);
-  if(!w||w<30||w>250){ toast("⚠️ Peso inválido","err"); return; }
+  if(!w||w<30||w>250){toast("Peso inválido","err");return;}
   const fp=parseFloat(S.newEval.fatPct)||S.evals[S.evals.length-1].fatPct;
   const lk=parseFloat(S.newEval.leanKg)||+(w*(1-fp/100)).toFixed(1);
-  S.evals.push({
-    id:S.evals.length+1,label:`Evaluación #${S.evals.length+13}`,
-    date:new Date().toLocaleDateString("es"),
-    weight:w,fatPct:fp,fatKg:+(w*fp/100).toFixed(1),
-    leanKg:+lk.toFixed(1),leanPct:+(100-fp).toFixed(1),
-    imc:+(w/(1.75**2)).toFixed(1),
-    measurements:{cintura:parseFloat(S.newEval.cintura)||0,abdome:parseFloat(S.newEval.abdome)||0,quadril:parseFloat(S.newEval.quadril)||0}
-  });
+  S.evals.push({id:S.evals.length+1,label:`Avaliação #${S.evals.length+13}`,date:new Date().toLocaleDateString("es"),weight:w,fatPct:fp,fatKg:+(w*fp/100).toFixed(1),leanKg:+lk.toFixed(1),leanPct:+(100-fp).toFixed(1),imc:+(w/(1.75**2)).toFixed(1),measurements:{cintura:parseFloat(S.newEval.cintura)||0,abdome:parseFloat(S.newEval.abdome)||0,quadril:parseFloat(S.newEval.quadril)||0}});
   S.newEval={weight:"",fatPct:"",leanKg:"",cintura:"",abdome:"",quadril:""};
-  S.showEvalForm=false; saveData(); renderTab(); toast("✅ Evaluación guardada");
+  S.showEvalForm=false;saveData();renderTab();toast("Avaliação salva");
 }
 
 function toast(msg,type="ok"){
   const el=document.getElementById("toast");
   el.textContent=msg;
-  el.style.borderColor=type==="err"?"#f87171":"#63b3ed";
+  el.style.background=type==="err"?"#5a2a2a":"#2d3526";
   el.classList.add("show");
   clearTimeout(window._tt);
   window._tt=setTimeout(()=>el.classList.remove("show"),3000);
 }
 
 if("serviceWorker" in navigator){
-  window.addEventListener("load",()=>
-    navigator.serviceWorker.register("./service-worker.js")
-      .then(()=>console.log("✅ SW ok"))
-      .catch(e=>console.warn("SW:",e))
-  );
+  window.addEventListener("load",()=>navigator.serviceWorker.register("./service-worker.js").then(()=>console.log("✅ SW ok")).catch(e=>console.warn("SW:",e)));
 }
 
 window.addEventListener("DOMContentLoaded",()=>{
-  getCfg().mode ? startApp() : showScreen("setup-screen");
+  getCfg().mode?startApp():showScreen("setup-screen");
 });
 </script>
 </body>

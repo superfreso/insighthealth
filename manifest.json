@@ -1,11 +1,11 @@
 {
-  "name": "InsightHealth — Edwar",
-  "short_name": "InsightHealth",
-  "description": "Tracker de alimentación y progreso físico con IA",
+  "name": "NutriBem",
+  "short_name": "NutriBem",
+  "description": "Tracker de alimentação e progresso físico com IA",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#0a0a0f",
-  "theme_color": "#63b3ed",
+  "background_color": "#f5f2ed",
+  "theme_color": "#4a5e3a",
   "orientation": "portrait",
   "icons": [
     {

@@ -180,7 +180,7 @@
       <option value="gemini-2.0-flash-lite">gemini-2.0-flash-lite — Mais barato</option>
     </select>
   </div>
-  <button class="btn-primary" onclick="saveDirectKey()">Salvar e começar</button>
+  <button class="btn-primary" onclick="saveDirectKey()">Guardar e começar</button>
   <button class="btn-secondary" onclick="showScreen('setup-screen')">← Voltar</button>
   <div style="font-size:11px;color:#c0b8b0;margin-top:12px">A key é salva apenas no seu dispositivo</div>
 </div>
@@ -191,7 +191,7 @@
   <div class="setup-title">URL do Worker</div>
   <div class="setup-sub">Cole a URL do seu Cloudflare Worker.</div>
   <input class="big-input" type="url" id="proxyUrlInput" placeholder="https://mi-worker.usuario.workers.dev"/>
-  <button class="btn-primary" onclick="saveProxyUrl()">Salvar e começar</button>
+  <button class="btn-primary" onclick="saveProxyUrl()">Guardar e começar</button>
   <button class="btn-secondary" onclick="showScreen('setup-screen')">← Voltar</button>
 </div>
 
@@ -201,14 +201,14 @@
     <div class="header-row">
       <div>
         <div class="app-name">nutribem</div>
-        <div class="greeting">Olá, <em>Edwar</em> 👋</div>
-        <div class="header-sub">Monitoramento desde 05/03/2026</div>
+        <div class="greeting">Hola, <em>Edwar</em> 👋</div>
+        <div class="header-sub">Seguimiento desde 05/03/2026</div>
       </div>
       <button class="config-btn" onclick="showScreen('setup-screen')">⚙️ Config</button>
     </div>
     <div class="header-meta">
       <div class="meta-dot"></div>
-      <div class="meta-text">Dados salvos</div>
+      <div class="meta-text">Datos guardados</div>
       <div id="cost-badge" class="cost-text"></div>
     </div>
   </div>
@@ -220,19 +220,19 @@
 <div class="navbar" id="navbar" style="display:none">
   <div class="nav-item" onclick="switchTab(0)">
     <svg class="nav-icon active" id="ni0" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-    <div class="nav-label active" id="nl0">Resumo</div>
+    <div class="nav-label active" id="nl0">resumen</div>
   </div>
   <div class="nav-item" onclick="switchTab(1)">
     <svg class="nav-icon" id="ni1" viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 010 8h-1M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
-    <div class="nav-label" id="nl1">Refeições</div>
+    <div class="nav-label" id="nl1">Comidas</div>
   </div>
   <div class="nav-item" onclick="switchTab(2)">
     <svg class="nav-icon" id="ni2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-    <div class="nav-label" id="nl2">Progresso</div>
+    <div class="nav-label" id="nl2">Progreso</div>
   </div>
   <div class="nav-item" onclick="switchTab(3)">
     <svg class="nav-icon" id="ni3" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-    <div class="nav-label" id="nl3">Avaliações</div>
+    <div class="nav-label" id="nl3">Evaluaciones</div>
   </div>
 </div>
 
@@ -304,7 +304,7 @@ function startApp(){
   document.getElementById("app").style.display="block";
   document.getElementById("navbar").style.display="flex";
   loadData();updateBadges();render();
-  toast("Pronto");
+  toast("Listo");
 }
 
 const PROMPT=`Analisa o alimento/bebida. Usuário: 20 anos, 77kg, objetivo reduzir gordura.
@@ -399,7 +399,7 @@ async function handlePhoto(e){
   if(!cfg.mode){toast("Configure a API primeiro","err");return;}
   S.loading=true;renderTab();
   try{
-    toast("Comprimindo imagem...");
+    toast("Comprimiendo imagen...");
     const img=await compress(file);
     toast("Gemini analisando...");
     const result=await callGemini(img.b64,img.mime);
@@ -435,10 +435,10 @@ function renderTab(){
   const today=new Date().toLocaleDateString("es");
   const tm=S.meals.filter(m=>m.date===today);
   const mac=tm.reduce((a,m)=>({cal:a.cal+(m.calorias||0),prot:a.prot+(m.proteina||0),carb:a.carb+(m.carbos||0),fat:a.fat+(m.grasa||0),fib:a.fib+(m.fibra||0)}),{cal:0,prot:0,carb:0,fat:0,fib:0});
-  if(S.tab===0)el.innerHTML=tabResumo(latest,mac,tm.length);
-  if(S.tab===1)el.innerHTML=tabRefeições();
-  if(S.tab===2)el.innerHTML=tabProgresso(latest);
-  if(S.tab===3)el.innerHTML=tabEvals();
+  if(S.tab===0)el.innerHTML=tabresumen(latest,mac,tm.length);
+  if(S.tab===1)el.innerHTML=tabcomidas();
+  if(S.tab===2)el.innerHTML=tabProgreso(latest);
+  if(S.tab===3)el.innerHTML=tabEvaluaciones();
 }
 
 function pbar(label,val,max,color,unit,goal=""){
@@ -449,11 +449,11 @@ function pbar(label,val,max,color,unit,goal=""){
   </div>`;
 }
 
-function tabResumo(latest,mac,count){
+function tabResumen(latest,mac,count){
   const wd=S.evals.length>1?(latest.weight-BASELINE.weight).toFixed(1):null;
   return`
   <div class="metric-grid">
-    ${[["Peso",latest.weight,"kg",wd?`${wd>0?"+":""}${wd} kg`:"Base inicial"],["Gordura",latest.fatPct,"%",`${latest.fatKg} kg`],["Massa magra",latest.leanKg,"kg",`${latest.leanPct}%`],["IMC",latest.imc||BASELINE.imc,"","Sobrepeso leve"]].map(([l,v,u,s])=>`
+    ${[["Peso",latest.weight,"kg",wd?`${wd>0?"+":""}${wd} kg`:"Base inicial"],["grasa",latest.fatPct,"%",`${latest.fatKg} kg`],["Masa magra",latest.leanKg,"kg",`${latest.leanPct}%`],["IMC",latest.imc||BASELINE.imc,"","Sobrepeso leve"]].map(([l,v,u,s])=>`
     <div class="metric-card">
       <div class="metric-label">${l}</div>
       <div class="metric-value">${v}<span class="metric-unit">${u}</span></div>
@@ -462,11 +462,11 @@ function tabResumo(latest,mac,count){
   </div>
   <div class="macro-card">
     <div class="section-title">Macros de hoje · ${count} refeição${count!==1?"s":""}</div>
-    ${count===0?'<div style="font-size:13px;color:#c0b8b0;text-align:center;padding:12px 0">Ainda sem refeições registradas hoje<br/><span style="font-size:11px">Ve a Refeições y saca una foto</span></div>':
+    ${count===0?'<div style="font-size:13px;color:#c0b8b0;text-align:center;padding:12px 0">Sin comidas registradas todavia<br/><span style="font-size:11px">Ve a comidas y saca una foto</span></div>':
       pbar("Calorias",mac.cal,2000,barColors[0]," kcal","/ 2000")+
       pbar("Proteína",mac.prot,130,barColors[1],"g","/ 130g")+
-      pbar("Carboidratos",mac.carb,200,barColors[2],"g","")+
-      pbar("Gordura",mac.fat,65,barColors[3],"g","")+
+      pbar("Carbohidratos",mac.carb,200,barColors[2],"g","")+
+      pbar("grasa",mac.fat,65,barColors[3],"g","")+
       pbar("Fibra",mac.fib,25,barColors[4],"g","/ 25g")}
   </div>
   <div class="goal-card">
@@ -478,7 +478,7 @@ function tabResumo(latest,mac,count){
   </div>`;
 }
 
-function tabRefeições(){
+function tabcomidas(){
   const cards=S.meals.map(m=>`
   <div class="meal-card">
     <div class="meal-top">
@@ -499,19 +499,19 @@ function tabRefeições(){
       ${m.positivo?`<div class="meal-positive">✓ ${m.positivo}</div>`:""}
       ${m.feedback?`<div class="meal-feedback">${m.feedback}</div>`:""}
       ${m.sugerencia?`<div class="meal-tip">${m.sugerencia}</div>`:""}
-      <div class="meal-conf">${m.clasificacion||""} · Confiança: <span style="color:${confColor(m.confianza)}">${m.confianza||"media"}</span></div>
+      <div class="meal-conf">${m.clasificacion||""} · Confianza: <span style="color:${confColor(m.confianza)}">${m.confianza||"media"}</span></div>
     </div>
   </div>`).join("");
   return`
   <button class="btn-analyze" onclick="document.getElementById('photoInput').click()">
-    Analisar refeição com Gemini
+    Analizar comida con Gemini
   </button>
-  ${S.loading?`<div class="loading-box"><div class="pulse" style="font-size:36px;margin-bottom:10px">🌿</div><div style="font-size:13px;color:#8a9a7a;font-weight:500">Gemini analisando...</div></div>`:""}
+  ${S.loading?`<div class="loading-box"><div class="pulse" style="font-size:36px;margin-bottom:10px">🌿</div><div style="font-size:13px;color:#8a9a7a;font-weight:500">Gemini analizando...</div></div>`:""}
   ${cards}
-  ${S.meals.length===0&&!S.loading?`<div class="empty-box"><div class="empty-icon">🍃</div><div class="empty-title">Sem refeições registradas ainda</div><div class="empty-sub">A IA calcula macros e te dá feedback</div></div>`:""}`;
+  ${S.meals.length===0&&!S.loading?`<div class="empty-box"><div class="empty-icon">🍃</div><div class="empty-title">Sin comidas registradas todavia</div><div class="empty-sub">A IA calcula macros e te dá feedback</div></div>`:""}`;
 }
 
-function tabProgresso(latest){
+function tabProgreso(latest){
   const barchart=(data,vFn,cFn,lFn,ex=2)=>{
     if(!data.length)return'<div style="color:#c0b8b0;font-size:13px;text-align:center;padding:16px">Sem dados ainda</div>';
     const vals=data.map(vFn),minV=Math.min(...vals)-ex,maxV=Math.max(...vals)+ex,range=maxV-minV||1;
@@ -531,11 +531,11 @@ function tabProgresso(latest){
     ${barchart(S.evals,e=>e.weight,(e,i,a)=>i===a.length-1?"#8a9a7a":"#c4d4b4",e=>e.weight)}
   </div>
   <div class="chart-card">
-    <div class="section-title">% Gordura corporal</div>
+    <div class="section-title">% grasa corporal</div>
     ${barchart(S.evals,e=>e.fatPct,(e)=>e.fatPct>24?"#c4a882":e.fatPct>21?"#c4b89a":"#a8c8a0",e=>e.fatPct+"%",1)}
   </div>
   <div class="chart-card">
-    <div class="section-title">Massa magra (kg)</div>
+    <div class="section-title">Masa magra (kg)</div>
     ${barchart(S.evals,e=>e.leanKg,(e,i,a)=>i===a.length-1?"#a8c8a0":"#c8e0c4",e=>e.leanKg)}
   </div>
   <div class="macro-card">
@@ -548,7 +548,7 @@ function tabProgresso(latest){
   </div>
   <div class="macro-card">
     <div class="section-title">🌿 Metas</div>
-    ${pbar("Gordura → 17%",latest.fatPct,21.8,barColors[0],"%","")}
+    ${pbar("grasa → 17%",latest.fatPct,21.8,barColors[0],"%","")}
     ${pbar("Peso → 73 kg",latest.weight,77.2,barColors[1]," kg","")}
     ${pbar("Magra → 62 kg",latest.leanKg,62,barColors[4]," kg","")}
   </div>`;
@@ -563,7 +563,7 @@ function tabEvals(){
         ${last?'<div class="eval-badge">Mais recente</div>':""}
       </div>
       <div class="eval-grid">
-        ${[["Peso",e.weight,"kg"],["Gordura",e.fatPct,"%"],["Magra",e.leanKg,"kg"]].map(([l,v,u])=>`
+        ${[["Peso",e.weight,"kg"],["grasa",e.fatPct,"%"],["Magra",e.leanKg,"kg"]].map(([l,v,u])=>`
         <div class="eval-metric">
           <div class="eval-metric-val">${v}<span class="eval-metric-unit">${u}</span></div>
           <div class="eval-metric-label">${l}</div>
@@ -574,18 +574,18 @@ function tabEvals(){
 
   const form=S.showEvalForm?`
   <div class="eval-card">
-    <div style="font-weight:500;font-size:14px;color:#2d3526;margin-bottom:16px">Nova avaliação</div>
-    ${[["weight","Peso (kg)"],["fatPct","% Gordura"],["leanKg","Massa magra (kg)"],["cintura","Cintura (cm)"],["abdome","Abdômen (cm)"],["quadril","Quadril (cm)"]].map(([k,l])=>`
+    <div style="font-weight:500;font-size:14px;color:#2d3526;margin-bottom:16px">Nueva evaluación</div>
+    ${[["weight","Peso (kg)"],["fatPct","% grasa"],["leanKg","Masa magra (kg)"],["cintura","Cintura (cm)"],["abdome","Abdômen (cm)"],["quadril","Quadril (cm)"]].map(([k,l])=>`
     <div style="margin-bottom:10px">
       <span class="input-label" style="display:block;margin-bottom:5px">${l}</span>
       <input class="eval-input" type="number" step="0.1" placeholder="${l}" value="${S.newEval[k]}" oninput="S.newEval['${k}']=this.value"/>
     </div>`).join("")}
     <div style="display:flex;gap:10px;margin-top:12px">
-      <button onclick="addEval()" style="flex:1;background:#4a5e3a;border:none;border-radius:12px;padding:13px;color:#f5f2ed;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer">Salvar</button>
+      <button onclick="addEval()" style="flex:1;background:#4a5e3a;border:none;border-radius:12px;padding:13px;color:#f5f2ed;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer">Guardar</button>
       <button onclick="S.showEvalForm=false;renderTab()" style="flex:1;background:none;border:1px solid #ede9e2;border-radius:12px;padding:13px;color:#a09890;font-family:'DM Sans',sans-serif;cursor:pointer">Cancelar</button>
     </div>
   </div>`
-  :`<button class="btn-add-eval" onclick="S.showEvalForm=true;renderTab()">+ Registrar nova avaliação</button>`;
+  :`<button class="btn-add-eval" onclick="S.showEvalForm=true;renderTab()">+ Registrar Nueva evaluación</button>`;
 
   return cards+form;
 }

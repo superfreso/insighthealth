@@ -435,10 +435,10 @@ function renderTab(){
   const today=new Date().toLocaleDateString("es");
   const tm=S.meals.filter(m=>m.date===today);
   const mac=tm.reduce((a,m)=>({cal:a.cal+(m.calorias||0),prot:a.prot+(m.proteina||0),carb:a.carb+(m.carbos||0),fat:a.fat+(m.grasa||0),fib:a.fib+(m.fibra||0)}),{cal:0,prot:0,carb:0,fat:0,fib:0});
-  if(S.tab===0)el.innerHTML=tabresumen(latest,mac,tm.length);
-  if(S.tab===1)el.innerHTML=tabcomidas();
-  if(S.tab===2)el.innerHTML=tabProgreso(latest);
-  if(S.tab===3)el.innerHTML=tabEvaluaciones();
+ if(S.tab===0)el.innerHTML=tabResumen(latest,mac,tm.length);
+if(S.tab===1)el.innerHTML=tabcomidas();
+if(S.tab===2)el.innerHTML=tabProgreso(latest);
+if(S.tab===3)el.innerHTML=tabEvals();
 }
 
 function pbar(label,val,max,color,unit,goal=""){

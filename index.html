@@ -307,10 +307,24 @@ function startApp(){
   toast("Listo");
 }
 
-const PROMPT=`Analisa o alimento/bebida. Usuário: 20 anos, 77kg, objetivo reduzir gordura.
+const PROMPT=`Analisa TODOS os alimentos visíveis na imagem como uma refeição completa.
+Usuário: 20 anos, 77kg, objetivo reduzir gordura.
+
+INSTRUÇÃO IMPORTANTE — múltiplos alimentos:
+Se houver mais de um alimento, identifica cada item individualmente,
+estima as calorias de cada um e soma o total.
+Exemplo: arroz (200kcal) + frango grelhado (180kcal) + salada (30kcal) = 410kcal total.
+
 Responda APENAS com este JSON exato (sem texto, sem markdown):
 {"nombre":"","calorias":0,"proteina":0,"carbos":0,"grasa":0,"fibra":0,"score":0,"clasificacion":"","confianza":"","porciones":"","positivo":"","feedback":"","sugerencia":""}
-Regras: calorias/proteina/carbos/grasa NUNCA são 0 (exceto água). Sempre estime. score 1-10.`;
+
+Regras:
+- calorias/proteina/carbos/grasa NUNCA são 0 (exceto água pura)
+- nombre: lista os alimentos principais separados por vírgula
+- porciones: descreve cada item com quantidade estimada visualmente
+- feedback: menciona os alimentos identificados e o total calórico
+- Sempre estime mesmo sem certeza absoluta — use o tamanho visual da porção
+- score 1-10 considerando toda a refeição`;
 
 async function callGemini(b64,mime){
   const cfg=getCfg();
@@ -332,7 +346,7 @@ async function callGemini(b64,mime){
     const url=`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${cfg.key}`;
     const res=await fetch(url,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({
       contents:[{parts:[{text:PROMPT},{inline_data:{mime_type:mime,data:b64}}]}],
-      generationConfig:{temperature:0.1,maxOutputTokens:1500,responseMimeType:"application/json"}
+      generationConfig:{temperature:0.1,maxOutputTokens:2000,responseMimeType:"application/json"}
     })});
     if(res.ok){
       if(m!==selectedModel){LS.set("ih-model",m);toast(`Usando ${m}`);}
@@ -377,7 +391,7 @@ function validate(d){
   return{nombre:String(d.nombre||"Alimento"),porciones:String(d.porciones||"1 porción"),calorias:Math.round(Math.abs(d.calorias||0)),proteina:Math.round(Math.abs(d.proteina||0)),carbos:Math.round(Math.abs(d.carbos||0)),grasa:Math.round(Math.abs(d.grasa||0)),fibra:Math.round(Math.abs(d.fibra||0)),score:Math.min(10,Math.max(1,Math.round(d.score||5))),clasificacion:String(d.clasificacion||"Regular"),positivo:String(d.positivo||""),feedback:String(d.feedback||""),sugerencia:String(d.sugerencia||""),confianza:String(d.confianza||"media")};
 }
 
-function compress(file,maxW=800,q=0.78){
+function compress(file,maxW=1100,q=0.82){
   return new Promise(res=>{
     const img=new Image(),url=URL.createObjectURL(file);
     img.onload=()=>{
